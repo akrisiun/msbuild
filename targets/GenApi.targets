@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-     <GenerateReferenceAssemblySources Condition="'$(GenerateReferenceAssemblySources)' == ''">false</GenerateReferenceAssemblySources>
+    <GenerateReferenceAssemblySources Condition="'$(GenerateReferenceAssemblySources)' == ''">false</GenerateReferenceAssemblySources>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GenerateReferenceAssemblySources)' == 'true'">
@@ -14,10 +14,7 @@
     <GenAPITargetPath Condition="'$(GenAPITargetPath)' == ''">$(GenAPITargetDir)$(TargetName).cs</GenAPITargetPath>
   </PropertyGroup>
 
-  <!-- 
-  <Import Project="$(GenApiDir)build\Microsoft.DotNet.BuildTools.GenAPI.targets" 
-    Condition="'$(GenerateReferenceAssemblySources)' == 'true'" />
-    -->
+  <Import Project="$(GenApiDir)build\Microsoft.DotNet.BuildTools.GenAPI.targets" Condition="'$(GenerateReferenceAssemblySources)' == 'true'" />
 
   <Target Name="CreateReferenceAssemblyDirectory"
           BeforeTargets="GenerateReferenceAssemblySource"

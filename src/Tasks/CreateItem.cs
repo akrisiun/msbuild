@@ -105,7 +105,7 @@ namespace Microsoft.Build.Tasks
         {
             if (Include == null)
             {
-                _include = Array.Empty<TaskItem>();
+                _include = new TaskItem[0];
                 return true;
             }
 

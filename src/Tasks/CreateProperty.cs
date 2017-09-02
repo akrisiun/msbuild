@@ -83,7 +83,7 @@ namespace Microsoft.Build.Tasks
         {
             if (_prop == null)
             {
-                _prop = Array.Empty<string>();
+                _prop = new string[0];
             }
 
             return true;

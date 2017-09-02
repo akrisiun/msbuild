@@ -350,7 +350,7 @@ namespace Microsoft.Build.BackEnd.Logging
                 setColor(ConsoleColor.Yellow);
                 foreach (BuildWarningEventArgs warning in warningList)
                 {
-                    WriteMessageAligned(EventArgsFormatting.FormatEventMessage(warning, showProjectFile), true);
+                    WriteMessageAligned(EventArgsFormatting.FormatEventMessage(warning, runningWithCharacterFileType, showProjectFile), true);
                 }
             }
 
@@ -359,7 +359,7 @@ namespace Microsoft.Build.BackEnd.Logging
                 setColor(ConsoleColor.Red);
                 foreach (BuildErrorEventArgs error in errorList)
                 {
-                    WriteMessageAligned(EventArgsFormatting.FormatEventMessage(error, showProjectFile), true);
+                    WriteMessageAligned(EventArgsFormatting.FormatEventMessage(error, runningWithCharacterFileType, showProjectFile), true);
                 }
             }
 
@@ -470,11 +470,11 @@ namespace Microsoft.Build.BackEnd.Logging
                 {
                     if (errorWarningEvent is BuildErrorEventArgs)
                     {
-                        WriteMessageAligned("  " + EventArgsFormatting.FormatEventMessage(errorWarningEvent as BuildErrorEventArgs, showProjectFile), false);
+                        WriteMessageAligned("  " + EventArgsFormatting.FormatEventMessage(errorWarningEvent as BuildErrorEventArgs, runningWithCharacterFileType, showProjectFile), false);
                     }
                     else if (errorWarningEvent is BuildWarningEventArgs)
                     {
-                        WriteMessageAligned("  " + EventArgsFormatting.FormatEventMessage(errorWarningEvent as BuildWarningEventArgs, showProjectFile), false);
+                        WriteMessageAligned("  " + EventArgsFormatting.FormatEventMessage(errorWarningEvent as BuildWarningEventArgs, runningWithCharacterFileType, showProjectFile), false);
                     }
                 }
                 WriteNewLine();
@@ -937,7 +937,7 @@ namespace Microsoft.Build.BackEnd.Logging
                 }
 
                 setColor(ConsoleColor.Red);
-                WriteMessageAligned(EventArgsFormatting.FormatEventMessage(e, showProjectFile), true);
+                WriteMessageAligned(EventArgsFormatting.FormatEventMessage(e, runningWithCharacterFileType, showProjectFile), true);
                 ShownBuildEventContext(e.BuildEventContext);
                 if (ShowSummary == true)
                 {
@@ -983,7 +983,7 @@ namespace Microsoft.Build.BackEnd.Logging
                 }
 
                 setColor(ConsoleColor.Yellow);
-                WriteMessageAligned(EventArgsFormatting.FormatEventMessage(e, showProjectFile), true);
+                WriteMessageAligned(EventArgsFormatting.FormatEventMessage(e, runningWithCharacterFileType, showProjectFile), true);
             }
 
             ShownBuildEventContext(e.BuildEventContext);
@@ -1124,7 +1124,7 @@ namespace Microsoft.Build.BackEnd.Logging
             // Include file information if present.
             if (e.File != null)
             {
-                nonNullMessage = EventArgsFormatting.FormatEventMessage(e, showProjectFile);
+                nonNullMessage = EventArgsFormatting.FormatEventMessage(e, runningWithCharacterFileType, showProjectFile);
             }
             else
             {

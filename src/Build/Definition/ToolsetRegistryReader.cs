@@ -79,7 +79,7 @@ namespace Microsoft.Build.Evaluation
         {
             get
             {
-                string[] toolsVersionNames = Array.Empty<string>();
+                string[] toolsVersionNames = new string[] { };
                 try
                 {
                     RegistryKeyWrapper subKey = null;

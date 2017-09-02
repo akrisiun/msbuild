@@ -418,7 +418,7 @@ namespace Microsoft.Build.Tasks
         {
             get
             {
-                return Array.Empty<ITaskItem>();
+                return new ITaskItem[0];
             }
         }
 
@@ -430,7 +430,7 @@ namespace Microsoft.Build.Tasks
         {
             get
             {
-                return Array.Empty<ITaskItem>();
+                return new ITaskItem[0];
             }
         }
 

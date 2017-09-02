@@ -16,6 +16,21 @@ namespace Microsoft.Build.Shared
     internal static class EventArgsFormatting
     {
         /// <summary>
+        /// Escape the carriage Return from a string
+        /// </summary>
+        /// <param name="stringWithCarriageReturn"></param>
+        /// <returns>String with carriage returns escaped as \\r </returns>
+        internal static string EscapeCarriageReturn(string stringWithCarriageReturn)
+        {
+            if (!string.IsNullOrEmpty(stringWithCarriageReturn))
+            {
+                return stringWithCarriageReturn.Replace("\r", "\\r");
+            }
+            // If the string is null or empty or then we just return the string
+            return stringWithCarriageReturn;
+        }
+
+        /// <summary>
         /// Format the error event message and all the other event data into
         /// a single string.
         /// </summary>
@@ -23,10 +38,22 @@ namespace Microsoft.Build.Shared
         /// <returns>The formatted message string.</returns>
         internal static string FormatEventMessage(BuildErrorEventArgs e)
         {
+            return FormatEventMessage(e, false);
+        }
+
+        /// <summary>
+        /// Format the error event message and all the other event data into
+        /// a single string.
+        /// </summary>
+        /// <param name="e">Error to format</param>
+        /// <param name="removeCarriageReturn"><code>true</code> to remove any carriage returns, otherwise <code>false</code>.</param>
+        /// <returns>The formatted message string.</returns>
+        internal static string FormatEventMessage(BuildErrorEventArgs e, bool removeCarriageReturn)
+        {
             ErrorUtilities.VerifyThrowArgumentNull(e, "e");
 
             // "error" should not be localized
-            return FormatEventMessage("error", e.Subcategory, e.Message,
+            return FormatEventMessage("error", e.Subcategory, removeCarriageReturn ? EscapeCarriageReturn(e.Message) : e.Message,
                             e.Code, e.File, null, e.LineNumber, e.EndLineNumber,
                             e.ColumnNumber, e.EndColumnNumber, e.ThreadId);
         }
@@ -36,14 +63,15 @@ namespace Microsoft.Build.Shared
         /// a single string.
         /// </summary>
         /// <param name="e">Error to format</param>
+        /// <param name="removeCarriageReturn"><code>true</code> to remove any carriage returns, otherwise <code>false</code>.</param>
         /// <param name="showProjectFile"><code>true</code> to show the project file which issued the event, otherwise <code>false</code>.</param>
         /// <returns>The formatted message string.</returns>
-        internal static string FormatEventMessage(BuildErrorEventArgs e, bool showProjectFile)
+        internal static string FormatEventMessage(BuildErrorEventArgs e, bool removeCarriageReturn, bool showProjectFile)
         {
             ErrorUtilities.VerifyThrowArgumentNull(e, "e");
 
             // "error" should not be localized
-            return FormatEventMessage("error", e.Subcategory, e.Message,
+            return FormatEventMessage("error", e.Subcategory, removeCarriageReturn ? EscapeCarriageReturn(e.Message) : e.Message,
                 e.Code, e.File, showProjectFile ? e.ProjectFile : null, e.LineNumber, e.EndLineNumber,
                             e.ColumnNumber, e.EndColumnNumber, e.ThreadId);
         }
@@ -56,10 +84,22 @@ namespace Microsoft.Build.Shared
         /// <returns>The formatted message string.</returns>
         internal static string FormatEventMessage(BuildWarningEventArgs e)
         {
+            return FormatEventMessage(e, false);
+        }
+
+        /// <summary>
+        /// Format the warning message and all the other event data into a
+        /// single string.
+        /// </summary>
+        /// <param name="e">Warning to format</param>
+        /// <param name="removeCarriageReturn"><code>true</code> to remove any carriage returns, otherwise <code>false</code>.</param>
+        /// <returns>The formatted message string.</returns>
+        internal static string FormatEventMessage(BuildWarningEventArgs e, bool removeCarriageReturn)
+        {
             ErrorUtilities.VerifyThrowArgumentNull(e, "e");
 
             // "warning" should not be localized
-            return FormatEventMessage("warning", e.Subcategory, e.Message,
+            return FormatEventMessage("warning", e.Subcategory, removeCarriageReturn ? EscapeCarriageReturn(e.Message) : e.Message,
                 e.Code, e.File, null, e.LineNumber, e.EndLineNumber,
                            e.ColumnNumber, e.EndColumnNumber, e.ThreadId);
         }
@@ -69,14 +109,15 @@ namespace Microsoft.Build.Shared
         /// single string.
         /// </summary>
         /// <param name="e">Warning to format</param>
+        /// <param name="removeCarriageReturn"><code>true</code> to remove any carriage returns, otherwise <code>false</code>.</param>
         /// <param name="showProjectFile"><code>true</code> to show the project file which issued the event, otherwise <code>false</code>.</param>
         /// <returns>The formatted message string.</returns>
-        internal static string FormatEventMessage(BuildWarningEventArgs e, bool showProjectFile)
+        internal static string FormatEventMessage(BuildWarningEventArgs e, bool removeCarriageReturn, bool showProjectFile)
         {
             ErrorUtilities.VerifyThrowArgumentNull(e, "e");
 
             // "warning" should not be localized
-            return FormatEventMessage("warning", e.Subcategory, e.Message,
+            return FormatEventMessage("warning", e.Subcategory, removeCarriageReturn ? EscapeCarriageReturn(e.Message) : e.Message,
                 e.Code, e.File, showProjectFile ? e.ProjectFile : null, e.LineNumber, e.EndLineNumber,
                            e.ColumnNumber, e.EndColumnNumber, e.ThreadId);
         }
@@ -97,14 +138,27 @@ namespace Microsoft.Build.Shared
         /// single string.
         /// </summary>
         /// <param name="e">Message to format</param>
+        /// <param name="removeCarriageReturn">Escape CR or leave as is</param>
+        /// <returns>The formatted message string.</returns>
+        internal static string FormatEventMessage(BuildMessageEventArgs e, bool removeCarriageReturn)
+        {
+            return FormatEventMessage(e, removeCarriageReturn, false);
+        }
+
+        /// <summary>
+        /// Format the message and all the other event data into a
+        /// single string.
+        /// </summary>
+        /// <param name="e">Message to format</param>
+        /// <param name="removeCarriageReturn">Escape CR or leave as is</param>
         /// <param name="showProjectFile">Show project file or not</param>
         /// <returns>The formatted message string.</returns>
-        internal static string FormatEventMessage(BuildMessageEventArgs e, bool showProjectFile)
+        internal static string FormatEventMessage(BuildMessageEventArgs e, bool removeCarriageReturn, bool showProjectFile)
         {
             ErrorUtilities.VerifyThrowArgumentNull(e, "e");
 
             // "message" should not be localized
-            return FormatEventMessage("message", e.Subcategory, e.Message,
+            return FormatEventMessage("message", e.Subcategory, removeCarriageReturn ? EscapeCarriageReturn(e.Message) : e.Message,
                 e.Code, e.File, showProjectFile ? e.ProjectFile : null, e.LineNumber, e.EndLineNumber, e.ColumnNumber, e.EndColumnNumber, e.ThreadId);
         }
 

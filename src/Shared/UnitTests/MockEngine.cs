@@ -37,6 +37,7 @@ namespace Microsoft.Build.UnitTests
         private int _warnings = 0;
         private int _errors = 0;
         private StringBuilder _log = new StringBuilder();
+        private string _upperLog = null;
         private ProjectCollection _projectCollection = new ProjectCollection();
         private bool _logToConsole = false;
         private MockLogger _mockLogger = null;
@@ -407,21 +408,26 @@ namespace Microsoft.Build.UnitTests
         /// First check if the string is in the log string. If not
         /// than make sure it is also check the MockLogger
         /// </summary>
+        /// <param name="contains"></param>
         internal void AssertLogContains(string contains)
         {
+            if (_upperLog == null)
+            {
+                _upperLog = _log.ToString().ToUpperInvariant();
+            }
+
             // If we do not contain this string than pass it to
             // MockLogger. Since MockLogger is also registered as
             // a logger it may have this string.
-            var logText = _log.ToString();
-            if (logText.IndexOf(contains, StringComparison.OrdinalIgnoreCase) == -1)
+            if (!_upperLog.Contains
+                (
+                    contains.ToUpperInvariant()
+                )
+              )
             {
                 if (_output == null)
                 {
-                    Console.WriteLine(logText);
-                }
-                else
-                {
-                    _output.WriteLine(logText);
+                    Console.WriteLine(_log.ToString());
                 }
 
                 _mockLogger.AssertLogContains(contains);
@@ -433,25 +439,31 @@ namespace Microsoft.Build.UnitTests
         /// First check if the string is in the log string. If not
         /// than make sure it is also not in the MockLogger
         /// </summary>
+        /// <param name="contains"></param>
         internal void AssertLogDoesntContain(string contains)
         {
-            var logText = _log.ToString();
-            
             if (_output == null)
             {
-                Console.WriteLine(logText);
-            }
-            else
-            {
-                _output.WriteLine(logText);
+                Console.WriteLine(_log);
             }
 
-            Assert.Equal(-1, logText.IndexOf(contains, StringComparison.OrdinalIgnoreCase));
+            if (_upperLog == null)
+            {
+                _upperLog = _log.ToString().ToUpperInvariant();
+            }
+
+            Assert.False(_upperLog.Contains
+                (
+                    contains.ToUpperInvariant()
+                ));
 
             // If we do not contain this string than pass it to
             // MockLogger. Since MockLogger is also registered as
             // a logger it may have this string.
-            _mockLogger.AssertLogDoesntContain(contains);
+            _mockLogger.AssertLogDoesntContain
+            (
+                contains
+            );
         }
 
         /// <summary>

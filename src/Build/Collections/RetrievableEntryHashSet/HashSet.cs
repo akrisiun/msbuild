@@ -229,16 +229,7 @@ namespace Microsoft.Build.Collections
         {
             get
             {
-                var keys = new string[_count];
-
-                int i = 0;
-                foreach (var item in this)
-                {
-                    keys[i] = item.Key;
-                    i++;
-                }
-
-                return keys;
+                return new ReadOnlyConvertingCollection<T, string>(this, delegate (T input) { return input.Key; }, delegate (string key) { return Contains(key); });
             }
         }
 

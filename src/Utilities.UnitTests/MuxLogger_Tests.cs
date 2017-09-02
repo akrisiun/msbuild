@@ -17,7 +17,6 @@ using Microsoft.Build.UnitTests;
 using MuxLogger = Microsoft.Build.Utilities.MuxLogger;
 using Xunit;
 using Microsoft.Build.Framework;
-using Shouldly;
 
 namespace Microsoft.VisualStudio.Build.UnitTest
 {
@@ -124,10 +123,10 @@ namespace Microsoft.VisualStudio.Build.UnitTest
                 buildManager.EndBuild();
             }
 
-            mockLogger2.BuildFinishedEvents.Count.ShouldBeGreaterThan(0);
-            mockLogger.BuildFinishedEvents.Count.ShouldBe(mockLogger2.BuildFinishedEvents.Count);
-            mockLogger.BuildFinishedEvents[0].Succeeded.ShouldBe(mockLogger2.BuildFinishedEvents[0].Succeeded);
-            mockLogger.FullLog.ShouldBe(mockLogger2.FullLog);
+            Assert.True(mockLogger2.BuildFinishedEvents.Count > 0);
+            Assert.Equal(mockLogger2.BuildFinishedEvents.Count, mockLogger.BuildFinishedEvents.Count);
+            Assert.Equal(mockLogger2.BuildFinishedEvents[0].Succeeded, mockLogger.BuildFinishedEvents[0].Succeeded);
+            Assert.Equal(mockLogger2.FullLog, mockLogger.FullLog);
         }
 
         /// <summary>
@@ -167,7 +166,7 @@ namespace Microsoft.VisualStudio.Build.UnitTest
 
             mockLogger.AssertLogContains("Foo");
             mockLogger.AssertLogContains("Error");
-            mockLogger.ErrorCount.ShouldBe(1);
+            Assert.Equal(1, mockLogger.ErrorCount);
             mockLogger.AssertNoWarnings();
         }
 
@@ -225,15 +224,15 @@ namespace Microsoft.VisualStudio.Build.UnitTest
             mockLogger1.AssertLogContains("Error");
             mockLogger1.AssertLogDoesntContain("Bar");
             mockLogger1.AssertLogDoesntContain("Warning");
-            mockLogger1.ErrorCount.ShouldBe(1);
-            mockLogger1.WarningCount.ShouldBe(0);
+            Assert.Equal(1, mockLogger1.ErrorCount);
+            Assert.Equal(0, mockLogger1.WarningCount);
 
             mockLogger2.AssertLogDoesntContain("Foo");
             mockLogger2.AssertLogDoesntContain("Error");
             mockLogger2.AssertLogContains("Bar");
             mockLogger2.AssertLogContains("Warning");
-            mockLogger2.ErrorCount.ShouldBe(0);
-            mockLogger2.WarningCount.ShouldBe(1);
+            Assert.Equal(0, mockLogger2.ErrorCount);
+            Assert.Equal(1, mockLogger2.WarningCount);
         }
 
         /// <summary>
@@ -279,10 +278,10 @@ namespace Microsoft.VisualStudio.Build.UnitTest
 
             mockLogger2.AssertLogContains("Foo");
             mockLogger2.AssertLogContains("Error");
-            mockLogger2.ErrorCount.ShouldBe(1);
+            Assert.Equal(1, mockLogger2.ErrorCount);
             mockLogger2.AssertNoWarnings();
 
-            mockLogger2.FullLog.ShouldBe(mockLogger1.FullLog);
+            Assert.Equal(mockLogger1.FullLog, mockLogger2.FullLog);
         }
 
         /// <summary>
@@ -306,27 +305,34 @@ namespace Microsoft.VisualStudio.Build.UnitTest
             AutoResetEvent projectStartedEvent = new AutoResetEvent(false);
             parameters.Loggers = new ILogger[] { muxLogger, new EventingLogger(projectStartedEvent) };
             MockLogger mockLogger = new MockLogger();
+            bool gotException = false;
             buildManager.BeginBuild(parameters);
 
-            Should.Throw<InvalidOperationException>(() =>
+            try
             {
+                BuildSubmission submission = buildManager.PendBuildRequest(new BuildRequestData(project, new string[0], null));
+
+                submission.ExecuteAsync(null, null);
+                projectStartedEvent.WaitOne();
+
                 try
                 {
-                    BuildSubmission submission = buildManager.PendBuildRequest(new BuildRequestData(project, new string[0], null));
-
-                    submission.ExecuteAsync(null, null);
-                    projectStartedEvent.WaitOne();
-
-                    // This call should throw an InvalidOperationException
                     muxLogger.RegisterLogger(submission.SubmissionId, mockLogger);
-
                 }
-                finally
+                catch (InvalidOperationException)
                 {
-                    buildManager.EndBuild();
+                    gotException = true;
                 }
-            });
+                catch
+                {
+                }
+            }
+            finally
+            {
+                buildManager.EndBuild();
+            }
 
+            Assert.True(gotException); // "Failed to get exception registering logger during build."
         }
 
         /// <summary>

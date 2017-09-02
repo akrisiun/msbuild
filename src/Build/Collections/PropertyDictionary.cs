@@ -51,14 +51,13 @@ namespace Microsoft.Build.Collections
         /// <summary>
         /// Comparer whose start and end indexes we can manipulate as necessary.
         /// </summary>
-        private MSBuildNameIgnoreCaseComparer _comparer;
+        private MSBuildNameIgnoreCaseComparer _comparer = MSBuildNameIgnoreCaseComparer.Mutable;
 
         /// <summary>
         /// Creates empty dictionary
         /// </summary>
         public PropertyDictionary()
         {
-            _comparer = MSBuildNameIgnoreCaseComparer.Mutable;
             _properties = new RetrievableEntryHashSet<T>(_comparer);
         }
 
@@ -67,7 +66,6 @@ namespace Microsoft.Build.Collections
         /// </summary>
         internal PropertyDictionary(int capacity)
         {
-            _comparer = MSBuildNameIgnoreCaseComparer.Mutable;
             _properties = new RetrievableEntryHashSet<T>(capacity, _comparer);
         }
 
@@ -81,15 +79,6 @@ namespace Microsoft.Build.Collections
             {
                 Set(element);
             }
-        }
-
-        /// <summary>
-        /// Creates empty dictionary, specifying a comparer
-        /// </summary>
-        internal PropertyDictionary(MSBuildNameIgnoreCaseComparer comparer)
-        {
-            _comparer = comparer;
-            _properties = new RetrievableEntryHashSet<T>(_comparer);
         }
 
         /// <summary>
@@ -112,10 +101,7 @@ namespace Microsoft.Build.Collections
         {
             get
             {
-                ErrorUtilities.ThrowInternalError("Keys is not supported on PropertyDictionary.");
-
-                // Show the compiler that this always throws:
-                throw new NotImplementedException();
+                return PropertyNames;
             }
         }
 
@@ -171,6 +157,21 @@ namespace Microsoft.Build.Collections
                 lock (_properties)
                 {
                     return _properties.Count;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a collection containing the names of all the properties present in the dictionary.
+        /// </summary>
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        internal ICollection<string> PropertyNames
+        {
+            get
+            {
+                lock (_properties)
+                {
+                    return _properties.Keys;
                 }
             }
         }
@@ -369,10 +370,7 @@ namespace Microsoft.Build.Collections
         /// </summary>
         bool IDictionary<string, T>.ContainsKey(string key)
         {
-            lock (_properties)
-            {
-                return _properties.ContainsKey(key);
-            }
+            return PropertyNames.Contains(key);
         }
 
         /// <summary>

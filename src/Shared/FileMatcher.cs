@@ -6,7 +6,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
@@ -15,7 +14,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Globalization;
 using System.Collections.Generic;
-using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Shared
 {
@@ -40,9 +38,6 @@ namespace Microsoft.Build.Shared
 
         internal static readonly GetFileSystemEntries s_defaultGetFileSystemEntries = new GetFileSystemEntries(GetAccessibleFileSystemEntries);
         private static readonly DirectoryExists s_defaultDirectoryExists = new DirectoryExists(Directory.Exists);
-
-        private static readonly Lazy<ConcurrentDictionary<string, string[]>> s_cachedFileEnumerations = new Lazy<ConcurrentDictionary<string, string[]>>(() => new ConcurrentDictionary<string, string[]>(StringComparer.OrdinalIgnoreCase));
-        private static readonly Lazy<ConcurrentDictionary<string, object>> s_cachedFileEnumerationsLock = new Lazy<ConcurrentDictionary<string, object>>(() => new ConcurrentDictionary<string, object>(StringComparer.OrdinalIgnoreCase));
 
         /// <summary>
         /// Cache of the list of invalid path characters, because this method returns a clone (for security reasons)
@@ -73,12 +68,6 @@ namespace Microsoft.Build.Shared
         /// <param name="stripProjectDirectory"></param>
         /// <returns>The array of filesystem entries.</returns>
         internal delegate string[] GetFileSystemEntries(FileSystemEntity entityType, string path, string pattern, string projectDirectory, bool stripProjectDirectory);
-
-        internal static void TestClearCaches()
-        {
-            s_cachedFileEnumerations.Value.Clear();
-            s_cachedFileEnumerationsLock.Value.Clear();
-        }
 
         /// <summary>
         /// Determines whether the given path has any wild card characters.
@@ -160,7 +149,7 @@ namespace Microsoft.Build.Shared
 
             if (entries == null)
             {
-                entries = Array.Empty<string>();
+                entries = new string[0];
             }
 
             return entries;
@@ -216,12 +205,12 @@ namespace Microsoft.Build.Shared
             catch (System.Security.SecurityException)
             {
                 // For code access security.
-                return Array.Empty<string>();
+                return new string[0];
             }
             catch (System.UnauthorizedAccessException)
             {
                 // For OS security.
-                return Array.Empty<string>();
+                return new string[0];
             }
         }
 
@@ -268,12 +257,12 @@ namespace Microsoft.Build.Shared
             catch (System.Security.SecurityException)
             {
                 // For code access security.
-                return Array.Empty<string>();
+                return new string[0];
             }
             catch (System.UnauthorizedAccessException)
             {
                 // For OS security.
-                return Array.Empty<string>();
+                return new string[0];
             }
         }
 
@@ -1402,66 +1391,8 @@ namespace Microsoft.Build.Shared
             IEnumerable<string> excludeSpecsUnescaped = null
         )
         {
-            // Possible future improvement: make sure file existence caching happens only at evaluation time, and maybe only within a build session. https://github.com/Microsoft/msbuild/issues/2306
-            if (Traits.Instance.MSBuildCacheFileEnumerations)
-            {
-                string filesKey = ComputeFileEnumerationCacheKey(projectDirectoryUnescaped, filespecUnescaped, excludeSpecsUnescaped);
-                string[] files;
-                if (!s_cachedFileEnumerations.Value.TryGetValue(filesKey, out files))
-                {
-                    // avoid parallel evaluations of the same wildcard by using a unique lock for each wildcard
-                    object locks = s_cachedFileEnumerationsLock.Value.GetOrAdd(filesKey, _ => new object());
-                    lock (locks)
-                    {
-                        if (!s_cachedFileEnumerations.Value.TryGetValue(filesKey, out files))
-                        {
-                            files =
-                                s_cachedFileEnumerations.Value.GetOrAdd(
-                                    filesKey,
-                                    (_) =>
-                                        GetFiles(
-                                            projectDirectoryUnescaped,
-                                            filespecUnescaped,
-                                            excludeSpecsUnescaped,
-                                            s_defaultGetFileSystemEntries,
-                                            s_defaultDirectoryExists));
-                        }
-                    }
-                }
-
-                // Copy the file enumerations to prevent outside modifications of the cache (e.g. sorting, escaping) and to maintain the original contract that a new array is created on each call.
-                var filesToReturn = new string[files.Length];
-                Array.Copy(files, filesToReturn, files.Length);
-                return filesToReturn;
-            }
-            else
-            {
-                string[] files = GetFiles(
-                    projectDirectoryUnescaped,
-                    filespecUnescaped,
-                    excludeSpecsUnescaped,
-                    s_defaultGetFileSystemEntries,
-                    s_defaultDirectoryExists);
-                return files;
-            }
-        }
-
-        private static string ComputeFileEnumerationCacheKey(string projectDirectoryUnescaped, string filespecUnescaped, IEnumerable<string> excludes)
-        {
-            var sb = new StringBuilder();
-
-            sb.Append(projectDirectoryUnescaped);
-            sb.Append(filespecUnescaped);
-
-            if (excludes != null)
-            {
-                foreach (var exclude in excludes)
-                {
-                    sb.Append(exclude);
-                }
-            }
-
-            return sb.ToString();
+            string[] files = GetFiles(projectDirectoryUnescaped, filespecUnescaped, excludeSpecsUnescaped, s_defaultGetFileSystemEntries, s_defaultDirectoryExists);
+            return files;
         }
 
         enum SearchAction
@@ -1593,14 +1524,14 @@ namespace Microsoft.Build.Shared
                     // - maintain legacy behaviour where an illegal filespec is treated as a normal string
                     if (FileUtilities.PathsEqual(filespecUnescaped, excludeSpec))
                     {
-                        return Array.Empty<string>();
+                        return new string[0];
                     }
 
                     var match = FileMatch(excludeSpec, filespecUnescaped);
 
                     if (match.isLegalFileSpec && match.isMatch)
                     {
-                        return Array.Empty<string>();
+                        return new string[0];
                     }
                 }
             }
@@ -1649,7 +1580,7 @@ namespace Microsoft.Build.Shared
 
             if (action == SearchAction.ReturnEmptyList)
             {
-                return Array.Empty<string>();
+                return new string[0];
             }
             else if (action == SearchAction.ReturnFileSpec)
             {

@@ -1,32 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\dir.props" />
   <PropertyGroup>
     <ProjectGuid>{571F09DB-A81A-4444-945C-6F7B530054CD}</ProjectGuid>
-    <OutputType>Library</OutputType>
+
     <RuntimeIdentifiers>win7</RuntimeIdentifiers>
+    <PlatformTarget>x64</PlatformTarget>
+    
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Build.Framework</RootNamespace>
     <AssemblyName>Microsoft.Build.Framework</AssemblyName>
-    <RuntimeIdentifiers>win7</RuntimeIdentifiers>
-    <EnableDocumentationFile>false</EnableDocumentationFile>
+    <EnableDocumentationFile>true</EnableDocumentationFile>
     <UpdateNuGetPackageDependencies>true</UpdateNuGetPackageDependencies>
     <DoNotLocalizeProject>true</DoNotLocalizeProject>
     <GenerateReferenceAssemblySources>true</GenerateReferenceAssemblySources>
   </PropertyGroup>
-  <!-- Default configurations to help VS understand the configurations
-    "netstandard1.3": {
-      "dependencies": {
-        "NETStandard.Library": "1.6.0",
-        "PdbGit": "3.0.41",
-        "SourceLink.Create.CommandLine": "2.1.2",
-        "System.Runtime.Serialization.Primitives": "4.1.1",
-        "System.Text.Encoding.CodePages" : "4.0.1",
-        "System.Threading.Thread": "4.0.0"
-      }
-    }
-  -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+  <!-- Default configurations to help VS understand the configurations -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  
+  <!--<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" />
@@ -34,12 +29,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-MONO|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-MONO|AnyCPU'" />
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>MSFT.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+  -->
   <ItemGroup>
     <Compile Include="..\Shared\Constants.cs">
       <Link>Constants.cs</Link>
@@ -175,7 +165,6 @@
     </Compile>
     <Compile Include="TelemetryEventArgs.cs" />
     <None Include="Event args classes.cd" />
-    <None Include="MSFT.snk" />
     <None Include="project.json" />
     <!-- Win32 RC Files -->
     <RCResourceFile Include="native.rc" />

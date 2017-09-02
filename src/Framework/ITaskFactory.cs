@@ -23,7 +23,7 @@ namespace Microsoft.Build.Framework
         string FactoryName { get; }
 
         /// <summary>
-        /// Gets the type of the task this factory will instantiate.  Implementations must return a value for this property.
+        /// Gets the type of the task this factory will instantiate.
         /// </summary>
         Type TaskType { get; }
 

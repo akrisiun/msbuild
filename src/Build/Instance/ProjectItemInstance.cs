@@ -1457,10 +1457,10 @@ namespace Microsoft.Build.Execution
             /// </summary>
             public override int GetHashCode()
             {
-                // This is ignore case to ensure that task items whose item specs differ only by 
+                // We need to change this to upper case to ensure that task items whose item specs differ only by 
                 // casing still have the same hash code, since this is used to determine if we have duplicates when 
                 // we do duplicate removal.
-                return StringComparer.OrdinalIgnoreCase.GetHashCode(ItemSpec);
+                return ItemSpec.ToUpperInvariant().GetHashCode();
             }
 
             /// <summary>

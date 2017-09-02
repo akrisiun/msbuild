@@ -19,7 +19,7 @@ namespace Microsoft.Build.Tasks
     public class ReadLinesFromFile : TaskExtension
     {
         private ITaskItem _file = null;
-        private ITaskItem[] _lines = Array.Empty<TaskItem>();
+        private ITaskItem[] _lines = new TaskItem[0];
 
         /// <summary>
         /// File to read lines from.

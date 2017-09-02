@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 
 using Microsoft.Build.Framework;
-using Shouldly;
 using Xunit;
 
 namespace Microsoft.Build.UnitTests
@@ -81,7 +80,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             GenericBuildEventArg newGenericEvent = new GenericBuildEventArg(null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
 
             // Test using empty strings
@@ -97,7 +97,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new GenericBuildEventArg(null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
 
             // Test using null strings
@@ -114,7 +115,8 @@ namespace Microsoft.Build.UnitTests
             newGenericEvent = new GenericBuildEventArg(null, null, null);
             newGenericEvent.BuildEventContext = new BuildEventContext(1, 3, 4, 5);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
         }
 
@@ -123,12 +125,12 @@ namespace Microsoft.Build.UnitTests
         /// </summary>
         private static void VerifyGenericEventArg(BuildEventArgs genericEvent, BuildEventArgs newGenericEvent)
         {
-            newGenericEvent.BuildEventContext.ShouldBe(genericEvent.BuildEventContext); // "Expected Event Context to Match"
-            newGenericEvent.HelpKeyword.ShouldBe(genericEvent.HelpKeyword, StringCompareShould.IgnoreCase); // "Expected Help Keywords to Match"
-            newGenericEvent.Message.ShouldBe(genericEvent.Message, StringCompareShould.IgnoreCase); // "Expected Message to Match"
-            string.Compare(genericEvent.SenderName, newGenericEvent.SenderName, StringComparison.OrdinalIgnoreCase).ShouldBe(0); // "Expected Sender Name to Match"
-            newGenericEvent.ThreadId.ShouldBe(genericEvent.ThreadId); // "Expected ThreadId to Match"
-            newGenericEvent.Timestamp.ShouldBe(genericEvent.Timestamp); // "Expected TimeStamp to Match"
+            Assert.Equal(genericEvent.BuildEventContext, newGenericEvent.BuildEventContext); // "Expected Event Context to Match"
+            Assert.Equal(0, string.Compare(genericEvent.HelpKeyword, newGenericEvent.HelpKeyword, StringComparison.OrdinalIgnoreCase)); // "Expected Help Keywords to Match"
+            Assert.Equal(0, string.Compare(genericEvent.Message, newGenericEvent.Message, StringComparison.OrdinalIgnoreCase)); // "Expected Message to Match"
+            Assert.Equal(0, string.Compare(genericEvent.SenderName, newGenericEvent.SenderName, StringComparison.OrdinalIgnoreCase)); // "Expected Sender Name to Match"
+            Assert.Equal(genericEvent.ThreadId, newGenericEvent.ThreadId); // "Expected ThreadId to Match"
+            Assert.Equal(genericEvent.Timestamp, newGenericEvent.Timestamp); // "Expected TimeStamp to Match"
         }
 
         [Fact]
@@ -146,7 +148,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             BuildErrorEventArgs newGenericEvent = new BuildErrorEventArgs(null, null, null, -1, -1, -1, -1, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyBuildErrorEventArgs(genericEvent, newGenericEvent);
 
@@ -163,7 +166,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new BuildErrorEventArgs(null, null, null, -1, -1, -1, -1, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyBuildErrorEventArgs(genericEvent, newGenericEvent);
 
@@ -180,7 +184,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new BuildErrorEventArgs("Something", "SomeThing", "SomeThing", -1, -1, -1, -1, "Something", "SomeThing", "Something");
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyBuildErrorEventArgs(genericEvent, newGenericEvent);
         }
@@ -190,11 +195,11 @@ namespace Microsoft.Build.UnitTests
         /// </summary>
         private static void VerifyBuildErrorEventArgs(BuildErrorEventArgs genericEvent, BuildErrorEventArgs newGenericEvent)
         {
-            newGenericEvent.Code.ShouldBe(genericEvent.Code, StringCompareShould.IgnoreCase); // "Expected Code to Match"
-            newGenericEvent.File.ShouldBe(genericEvent.File, StringCompareShould.IgnoreCase); // "Expected File to Match"
-            newGenericEvent.ColumnNumber.ShouldBe(genericEvent.ColumnNumber); // "Expected ColumnNumber to Match"
-            newGenericEvent.EndColumnNumber.ShouldBe(genericEvent.EndColumnNumber); // "Expected EndColumnNumber to Match"
-            newGenericEvent.EndLineNumber.ShouldBe(genericEvent.EndLineNumber); // "Expected EndLineNumber to Match"
+            Assert.Equal(0, string.Compare(genericEvent.Code, newGenericEvent.Code, StringComparison.OrdinalIgnoreCase)); // "Expected Code to Match"
+            Assert.Equal(0, string.Compare(genericEvent.File, newGenericEvent.File, StringComparison.OrdinalIgnoreCase)); // "Expected File to Match"
+            Assert.Equal(genericEvent.ColumnNumber, newGenericEvent.ColumnNumber); // "Expected ColumnNumber to Match"
+            Assert.Equal(genericEvent.EndColumnNumber, newGenericEvent.EndColumnNumber); // "Expected EndColumnNumber to Match"
+            Assert.Equal(genericEvent.EndLineNumber, newGenericEvent.EndLineNumber); // "Expected EndLineNumber to Match"
         }
 
 
@@ -213,7 +218,7 @@ namespace Microsoft.Build.UnitTests
             BuildFinishedEventArgs newGenericEvent = new BuildFinishedEventArgs(null, null, false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Succeeded.ShouldBe(genericEvent.Succeeded); // "Expected Succeeded to Match"
+            Assert.Equal(genericEvent.Succeeded, newGenericEvent.Succeeded); // "Expected Succeeded to Match"
 
             // Test using empty strings
             _stream.Position = 0;
@@ -228,7 +233,7 @@ namespace Microsoft.Build.UnitTests
             newGenericEvent = new BuildFinishedEventArgs(null, null, false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Succeeded.ShouldBe(genericEvent.Succeeded); // "Expected Succeeded to Match"
+            Assert.Equal(genericEvent.Succeeded, newGenericEvent.Succeeded); // "Expected Succeeded to Match"
 
             // Test using null strings
             _stream.Position = 0;
@@ -243,7 +248,7 @@ namespace Microsoft.Build.UnitTests
             newGenericEvent = new BuildFinishedEventArgs("Something", "Something", false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Succeeded.ShouldBe(genericEvent.Succeeded); // "Expected Succeeded to Match"
+            Assert.Equal(genericEvent.Succeeded, newGenericEvent.Succeeded); // "Expected Succeeded to Match"
         }
 
         [Fact]
@@ -261,9 +266,10 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             BuildMessageEventArgs newGenericEvent = new BuildMessageEventArgs(null, null, null, MessageImportance.Low);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Importance.ShouldBe(genericEvent.Importance); // "Expected Message Importance to Match"
+            Assert.Equal(genericEvent.Importance, newGenericEvent.Importance); // "Expected Message Importance to Match"
 
             // Test empty strings
             _stream.Position = 0;
@@ -279,9 +285,10 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new BuildMessageEventArgs(null, null, null, MessageImportance.Low);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Importance.ShouldBe(genericEvent.Importance); // "Expected Message Importance to Match"
+            Assert.Equal(genericEvent.Importance, newGenericEvent.Importance); // "Expected Message Importance to Match"
 
             // Test null strings
             _stream.Position = 0;
@@ -297,23 +304,24 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new BuildMessageEventArgs("Something", "Something", "Something", MessageImportance.Low);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Importance.ShouldBe(genericEvent.Importance); // "Expected Message Importance to Match"
+            Assert.Equal(genericEvent.Importance, newGenericEvent.Importance); // "Expected Message Importance to Match"
         }
 
         private void VerifyMessageEventArg(BuildMessageEventArgs messageEvent, BuildMessageEventArgs newMessageEvent)
         {
             VerifyGenericEventArg(messageEvent, newMessageEvent);
 
-            newMessageEvent.Importance.ShouldBe(messageEvent.Importance); // "Expected Message Importance to Match"
-            newMessageEvent.Subcategory.ShouldBe(messageEvent.Subcategory); // "Expected message Subcategory to match"
-            newMessageEvent.Code.ShouldBe(messageEvent.Code); // "Expected message Code to match"
-            newMessageEvent.File.ShouldBe(messageEvent.File); // "Expected message File to match"
-            newMessageEvent.LineNumber.ShouldBe(messageEvent.LineNumber); // "Expected message LineNumber to match"
-            newMessageEvent.ColumnNumber.ShouldBe(messageEvent.ColumnNumber); // "Expected message ColumnNumber to match"
-            newMessageEvent.EndLineNumber.ShouldBe(messageEvent.EndLineNumber); // "Expected message EndLineNumber to match"
-            newMessageEvent.EndColumnNumber.ShouldBe(messageEvent.EndColumnNumber); // "Expected message EndColumnNumber to match"
+            Assert.Equal(messageEvent.Importance, newMessageEvent.Importance); // "Expected Message Importance to Match"
+            Assert.Equal(messageEvent.Subcategory, newMessageEvent.Subcategory); // "Expected message Subcategory to match"
+            Assert.Equal(messageEvent.Code, newMessageEvent.Code); // "Expected message Code to match"
+            Assert.Equal(messageEvent.File, newMessageEvent.File); // "Expected message File to match"
+            Assert.Equal(messageEvent.LineNumber, newMessageEvent.LineNumber); // "Expected message LineNumber to match"
+            Assert.Equal(messageEvent.ColumnNumber, newMessageEvent.ColumnNumber); // "Expected message ColumnNumber to match"
+            Assert.Equal(messageEvent.EndLineNumber, newMessageEvent.EndLineNumber); // "Expected message EndLineNumber to match"
+            Assert.Equal(messageEvent.EndColumnNumber, newMessageEvent.EndColumnNumber); // "Expected message EndColumnNumber to match"
         }
 
         [Fact]
@@ -331,7 +339,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             BuildMessageEventArgs newMessageEvent = new BuildMessageEventArgs(null, null, null, 0, 0, 0, 0, null, null, null, MessageImportance.Low);
             newMessageEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyMessageEventArg(messageEvent, newMessageEvent);
 
             // Test empty strings
@@ -348,7 +357,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newMessageEvent = new BuildMessageEventArgs(null, null, null, 0, 0, 0, 0, null, null, null, MessageImportance.Low);
             newMessageEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyMessageEventArg(messageEvent, newMessageEvent);
 
             // Test null strings
@@ -365,7 +375,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newMessageEvent = new BuildMessageEventArgs("Something", "Something", "Something", 0, 0, 0, 0, "Something", "Something", "Something", MessageImportance.Low);
             newMessageEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyMessageEventArg(messageEvent, newMessageEvent);
         }
 
@@ -384,8 +395,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             CriticalBuildMessageEventArgs newCriticalMessageEvent = new CriticalBuildMessageEventArgs(null, null, null, 0, 0, 0, 0, null, null, null);
             newCriticalMessageEvent.CreateFromStream(_reader, _eventArgVersion);
-
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyMessageEventArg(criticalMessageEvent, newCriticalMessageEvent);
 
             // Test empty strings
@@ -402,7 +413,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newCriticalMessageEvent = new CriticalBuildMessageEventArgs(null, null, null, 0, 0, 0, 0, null, null, null);
             newCriticalMessageEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyMessageEventArg(criticalMessageEvent, newCriticalMessageEvent);
 
             // Test null strings
@@ -419,7 +431,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newCriticalMessageEvent = new CriticalBuildMessageEventArgs("Something", "Something", "Something", 0, 0, 0, 0, "Something", "Something", "Something");
             newCriticalMessageEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyMessageEventArg(criticalMessageEvent, newCriticalMessageEvent);
         }
 
@@ -438,7 +451,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             BuildWarningEventArgs newGenericEvent = new BuildWarningEventArgs(null, null, null, -1, -1, -1, -1, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyBuildWarningEventArgs(genericEvent, newGenericEvent);
 
@@ -455,7 +469,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new BuildWarningEventArgs(null, null, null, -1, -1, -1, -1, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyBuildWarningEventArgs(genericEvent, newGenericEvent);
 
@@ -472,7 +487,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new BuildWarningEventArgs("Something", "SomeThing", "SomeThing", -1, -1, -1, -1, "Something", "SomeThing", "Something");
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyBuildWarningEventArgs(genericEvent, newGenericEvent);
         }
@@ -482,12 +498,12 @@ namespace Microsoft.Build.UnitTests
         /// </summary>
         private static void VerifyBuildWarningEventArgs(BuildWarningEventArgs genericEvent, BuildWarningEventArgs newGenericEvent)
         {
-            newGenericEvent.Subcategory.ShouldBe(genericEvent.Subcategory, StringCompareShould.IgnoreCase); // "Expected SubCategory to Match"
-            newGenericEvent.Code.ShouldBe(genericEvent.Code, StringCompareShould.IgnoreCase); // "Expected Code to Match"
-            string.Compare(genericEvent.File, newGenericEvent.File, StringComparison.OrdinalIgnoreCase).ShouldBe(0); // "Expected File to Match"
-            newGenericEvent.ColumnNumber.ShouldBe(genericEvent.ColumnNumber); // "Expected ColumnNumber to Match"
-            newGenericEvent.EndColumnNumber.ShouldBe(genericEvent.EndColumnNumber); // "Expected EndColumnNumber to Match"
-            newGenericEvent.EndLineNumber.ShouldBe(genericEvent.EndLineNumber); // "Expected EndLineNumber to Match"
+            Assert.Equal(0, string.Compare(genericEvent.Subcategory, newGenericEvent.Subcategory, StringComparison.OrdinalIgnoreCase)); // "Expected SubCategory to Match"
+            Assert.Equal(0, string.Compare(genericEvent.Code, newGenericEvent.Code, StringComparison.OrdinalIgnoreCase)); // "Expected Code to Match"
+            Assert.Equal(0, string.Compare(genericEvent.File, newGenericEvent.File, StringComparison.OrdinalIgnoreCase)); // "Expected File to Match"
+            Assert.Equal(genericEvent.ColumnNumber, newGenericEvent.ColumnNumber); // "Expected ColumnNumber to Match"
+            Assert.Equal(genericEvent.EndColumnNumber, newGenericEvent.EndColumnNumber); // "Expected EndColumnNumber to Match"
+            Assert.Equal(genericEvent.EndLineNumber, newGenericEvent.EndLineNumber); // "Expected EndLineNumber to Match"
         }
 
         [Fact]
@@ -505,10 +521,11 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             ProjectFinishedEventArgs newGenericEvent = new ProjectFinishedEventArgs(null, null, null, false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Succeeded.ShouldBe(genericEvent.Succeeded); // "Expected Succeeded to Match"
-            newGenericEvent.ProjectFile.ShouldBe(genericEvent.ProjectFile, StringCompareShould.IgnoreCase); // "Expected ProjectFile to Match"
+            Assert.Equal(genericEvent.Succeeded, newGenericEvent.Succeeded); // "Expected Succeeded to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ProjectFile, newGenericEvent.ProjectFile, StringComparison.OrdinalIgnoreCase)); // "Expected ProjectFile to Match"
 
             // Test with empty strings
             _stream.Position = 0;
@@ -523,10 +540,11 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new ProjectFinishedEventArgs(null, null, null, false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Succeeded.ShouldBe(genericEvent.Succeeded); // "Expected Succeeded to Match"
-            newGenericEvent.ProjectFile.ShouldBe(genericEvent.ProjectFile, StringCompareShould.IgnoreCase); // "Expected ProjectFile to Match"
+            Assert.Equal(genericEvent.Succeeded, newGenericEvent.Succeeded); // "Expected Succeeded to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ProjectFile, newGenericEvent.ProjectFile, StringComparison.OrdinalIgnoreCase)); // "Expected ProjectFile to Match"
 
             // Test with null strings
             _stream.Position = 0;
@@ -542,10 +560,11 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new ProjectFinishedEventArgs("Something", "Something", "Something", false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
-            newGenericEvent.Succeeded.ShouldBe(genericEvent.Succeeded); // "Expected Succeeded to Match"
-            newGenericEvent.ProjectFile.ShouldBe(genericEvent.ProjectFile, StringCompareShould.IgnoreCase); // "Expected ProjectFile to Match"
+            Assert.Equal(genericEvent.Succeeded, newGenericEvent.Succeeded); // "Expected Succeeded to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ProjectFile, newGenericEvent.ProjectFile, StringComparison.OrdinalIgnoreCase)); // "Expected ProjectFile to Match"
         }
 
         [Fact]
@@ -573,9 +592,10 @@ namespace Microsoft.Build.UnitTests
             ProjectStartedEventArgs newGenericEvent = new ProjectStartedEventArgs(-1, null, null, null, null, null, null, null);
 
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
+            long streamReadEndPosition = _stream.Position;
 
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
-            newGenericEvent.Properties.ShouldNotBeNull(); // "Expected Properties to not be null"
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
+            Assert.NotNull(newGenericEvent.Properties); // "Expected Properties to not be null"
 
             // Create a list of all of the dictionaryEntries which were deserialized
             List<DictionaryEntry> entryList = new List<DictionaryEntry>();
@@ -597,7 +617,7 @@ namespace Microsoft.Build.UnitTests
         private void AssertDictionaryEntry(List<DictionaryEntry> entryList, List<DictionaryEntry> propertyList)
         {
             // make sure that there are the same number of elements in both lists as a quick initial check
-            entryList.Count.ShouldBe(propertyList.Count);
+            Assert.Equal(propertyList.Count, entryList.Count);
 
             // Go through each of the properties which were serialized and make sure we find the exact same
             // name and value in the deserialized version.
@@ -617,7 +637,7 @@ namespace Microsoft.Build.UnitTests
                     }
                 }
 
-                found.ShouldBeTrue($"Expected to find Key: {property.Key} Value: {property.Value}");
+                Assert.True(found, "Expected to find Key:" + property.Key + " Value:" + property.Value);
             }
         }
 
@@ -636,7 +656,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             ProjectStartedEventArgs newGenericEvent = new ProjectStartedEventArgs(-1, null, null, null, null, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyProjectStartedEvent(genericEvent, newGenericEvent);
 
@@ -653,7 +674,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new ProjectStartedEventArgs(-1, null, null, null, null, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream end positions should be equal"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream end positions should be equal"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyProjectStartedEvent(genericEvent, newGenericEvent);
 
@@ -670,7 +692,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new ProjectStartedEventArgs(4, "Something", "Something", "Something", null, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyProjectStartedEvent(genericEvent, newGenericEvent);
         }
@@ -680,12 +703,12 @@ namespace Microsoft.Build.UnitTests
         /// </summary>
         private static void VerifyProjectStartedEvent(ProjectStartedEventArgs genericEvent, ProjectStartedEventArgs newGenericEvent)
         {
-            newGenericEvent.Items.ShouldBe(genericEvent.Items); // "Expected Properties to match"
-            newGenericEvent.Properties.ShouldBe(genericEvent.Properties); // "Expected Properties to match"
-            newGenericEvent.ParentProjectBuildEventContext.ShouldBe(genericEvent.ParentProjectBuildEventContext); // "Expected ParentEvent Contexts to match"
-            newGenericEvent.ProjectId.ShouldBe(genericEvent.ProjectId); // "Expected ProjectId to Match"
-            newGenericEvent.ProjectFile.ShouldBe(genericEvent.ProjectFile, StringCompareShould.IgnoreCase); // "Expected ProjectFile to Match"
-            newGenericEvent.TargetNames.ShouldBe(genericEvent.TargetNames, StringCompareShould.IgnoreCase); // "Expected TargetNames to Match"
+            Assert.Equal(genericEvent.Items, newGenericEvent.Items); // "Expected Properties to match"
+            Assert.Equal(genericEvent.Properties, newGenericEvent.Properties); // "Expected Properties to match"
+            Assert.Equal(genericEvent.ParentProjectBuildEventContext, newGenericEvent.ParentProjectBuildEventContext); // "Expected ParentEvent Contexts to match"
+            Assert.Equal(genericEvent.ProjectId, newGenericEvent.ProjectId); // "Expected ProjectId to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ProjectFile, newGenericEvent.ProjectFile, StringComparison.OrdinalIgnoreCase)); // "Expected ProjectFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TargetNames, newGenericEvent.TargetNames, StringComparison.OrdinalIgnoreCase)); // "Expected TargetNames to Match"
         }
 
         [Fact]
@@ -703,7 +726,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             TargetStartedEventArgs newGenericEvent = new TargetStartedEventArgs(null, null, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTargetStarted(genericEvent, newGenericEvent);
 
@@ -721,7 +745,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new TargetStartedEventArgs(null, null, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTargetStarted(genericEvent, newGenericEvent);
 
@@ -737,7 +762,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new TargetStartedEventArgs("Something", "Something", "Something", "Something", "Something", "Something", DateTime.Now);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTargetStarted(genericEvent, newGenericEvent);
         }
@@ -747,10 +773,10 @@ namespace Microsoft.Build.UnitTests
         /// </summary>
         private static void VerifyTargetStarted(TargetStartedEventArgs genericEvent, TargetStartedEventArgs newGenericEvent)
         {
-            newGenericEvent.TargetFile.ShouldBe(genericEvent.TargetFile, StringCompareShould.IgnoreCase); // "Expected TargetFile to Match"
-            newGenericEvent.ProjectFile.ShouldBe(genericEvent.ProjectFile, StringCompareShould.IgnoreCase); // "Expected ProjectFile to Match"
-            newGenericEvent.TargetName.ShouldBe(genericEvent.TargetName, StringCompareShould.IgnoreCase); // "Expected TargetName to Match"
-            newGenericEvent.ParentTarget.ShouldBe(genericEvent.ParentTarget, StringCompareShould.IgnoreCase); // "Expected ParentTarget to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TargetFile, newGenericEvent.TargetFile, StringComparison.OrdinalIgnoreCase)); // "Expected TargetFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ProjectFile, newGenericEvent.ProjectFile, StringComparison.OrdinalIgnoreCase)); // "Expected ProjectFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TargetName, newGenericEvent.TargetName, StringComparison.OrdinalIgnoreCase)); // "Expected TargetName to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ParentTarget, newGenericEvent.ParentTarget, StringComparison.OrdinalIgnoreCase)); // "Expected ParentTarget to Match"
         }
 
         [Fact]
@@ -768,7 +794,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             TargetFinishedEventArgs newGenericEvent = new TargetFinishedEventArgs(null, null, null, null, null, false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTargetFinished(genericEvent, newGenericEvent);
 
@@ -785,7 +812,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new TargetFinishedEventArgs(null, null, null, null, null, false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTargetFinished(genericEvent, newGenericEvent);
 
@@ -801,7 +829,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new TargetFinishedEventArgs("Something", "Something", "Something", "Something", "Something", false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTargetFinished(genericEvent, newGenericEvent);
         }
@@ -811,10 +840,10 @@ namespace Microsoft.Build.UnitTests
         /// </summary>
         private static void VerifyTargetFinished(TargetFinishedEventArgs genericEvent, TargetFinishedEventArgs newGenericEvent)
         {
-            newGenericEvent.Succeeded.ShouldBe(genericEvent.Succeeded); // "Expected Succeeded to Match"
-            newGenericEvent.ProjectFile.ShouldBe(genericEvent.ProjectFile, StringCompareShould.IgnoreCase); // "Expected ProjectFile to Match"
-            newGenericEvent.TargetFile.ShouldBe(genericEvent.TargetFile, StringCompareShould.IgnoreCase); // "Expected TargetFile to Match"
-            newGenericEvent.TargetName.ShouldBe(genericEvent.TargetName, StringCompareShould.IgnoreCase); // "Expected TargetName to Match"
+            Assert.Equal(genericEvent.Succeeded, newGenericEvent.Succeeded); // "Expected Succeeded to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ProjectFile, newGenericEvent.ProjectFile, StringComparison.OrdinalIgnoreCase)); // "Expected ProjectFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TargetFile, newGenericEvent.TargetFile, StringComparison.OrdinalIgnoreCase)); // "Expected TargetFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TargetName, newGenericEvent.TargetName, StringComparison.OrdinalIgnoreCase)); // "Expected TargetName to Match"
         }
 
         [Fact]
@@ -832,7 +861,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             TaskStartedEventArgs newGenericEvent = new TaskStartedEventArgs(null, null, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTaskStarted(genericEvent, newGenericEvent);
 
@@ -849,7 +879,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new TaskStartedEventArgs(null, null, null, null, null);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTaskStarted(genericEvent, newGenericEvent);
 
@@ -867,7 +898,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new TaskStartedEventArgs("Something", "Something", "Something", "Something", "Something");
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTaskStarted(genericEvent, newGenericEvent);
         }
@@ -877,9 +909,9 @@ namespace Microsoft.Build.UnitTests
         /// </summary>
         private static void VerifyTaskStarted(TaskStartedEventArgs genericEvent, TaskStartedEventArgs newGenericEvent)
         {
-            newGenericEvent.TaskFile.ShouldBe(genericEvent.TaskFile, StringCompareShould.IgnoreCase); // "Expected TaskFile to Match"
-            newGenericEvent.ProjectFile.ShouldBe(genericEvent.ProjectFile, StringCompareShould.IgnoreCase); // "Expected ProjectFile to Match"
-            newGenericEvent.TaskName.ShouldBe(genericEvent.TaskName, StringCompareShould.IgnoreCase); // "Expected TaskName to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TaskFile, newGenericEvent.TaskFile, StringComparison.OrdinalIgnoreCase)); // "Expected TaskFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ProjectFile, newGenericEvent.ProjectFile, StringComparison.OrdinalIgnoreCase)); // "Expected ProjectFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TaskName, newGenericEvent.TaskName, StringComparison.OrdinalIgnoreCase)); // "Expected TaskName to Match"
         }
 
         [Fact]
@@ -897,7 +929,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             TaskFinishedEventArgs newGenericEvent = new TaskFinishedEventArgs(null, null, null, null, null, false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            long streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTaskFinished(genericEvent, newGenericEvent);
 
@@ -915,7 +948,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new TaskFinishedEventArgs(null, null, null, null, null, false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTaskFinished(genericEvent, newGenericEvent);
 
@@ -933,7 +967,8 @@ namespace Microsoft.Build.UnitTests
             _stream.Position = 0;
             newGenericEvent = new TaskFinishedEventArgs("Something", "Something", "Something", "Something", "Something", false);
             newGenericEvent.CreateFromStream(_reader, _eventArgVersion);
-            _stream.Position.ShouldBe(streamWriteEndPosition); // "Stream End Positions Should Match"
+            streamReadEndPosition = _stream.Position;
+            Assert.Equal(streamWriteEndPosition, streamReadEndPosition); // "Stream End Positions Should Match"
             VerifyGenericEventArg(genericEvent, newGenericEvent);
             VerifyTaskFinished(genericEvent, newGenericEvent);
         }
@@ -943,10 +978,10 @@ namespace Microsoft.Build.UnitTests
         /// </summary>
         private static void VerifyTaskFinished(TaskFinishedEventArgs genericEvent, TaskFinishedEventArgs newGenericEvent)
         {
-            newGenericEvent.Succeeded.ShouldBe(genericEvent.Succeeded); // "Expected Succeeded to Match"
-            newGenericEvent.ProjectFile.ShouldBe(genericEvent.ProjectFile, StringCompareShould.IgnoreCase); // "Expected ProjectFile to Match"
-            newGenericEvent.TaskFile.ShouldBe(genericEvent.TaskFile, StringCompareShould.IgnoreCase); // "Expected TaskFile to Match"
-            newGenericEvent.TaskName.ShouldBe(genericEvent.TaskName, StringCompareShould.IgnoreCase); // "Expected TaskName to Match"
+            Assert.Equal(genericEvent.Succeeded, newGenericEvent.Succeeded); // "Expected Succeeded to Match"
+            Assert.Equal(0, string.Compare(genericEvent.ProjectFile, newGenericEvent.ProjectFile, StringComparison.OrdinalIgnoreCase)); // "Expected ProjectFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TaskFile, newGenericEvent.TaskFile, StringComparison.OrdinalIgnoreCase)); // "Expected TaskFile to Match"
+            Assert.Equal(0, string.Compare(genericEvent.TaskName, newGenericEvent.TaskName, StringComparison.OrdinalIgnoreCase)); // "Expected TaskName to Match"
         }
     }
 }

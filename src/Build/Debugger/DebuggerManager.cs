@@ -809,7 +809,7 @@ namespace Microsoft.Build.Debugging
 
                 this.Location = location;
                 this.Name = name;
-                this.EarlyLocalsTypes = earlyLocalsTypes ?? Array.Empty<DebuggerLocalType>();
+                this.EarlyLocalsTypes = earlyLocalsTypes ?? ReadOnlyEmptyList<DebuggerLocalType>.Instance;
             }
 
             /// <summary>

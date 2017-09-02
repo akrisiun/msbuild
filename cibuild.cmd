@@ -80,9 +80,6 @@ set RUNTIME_HOST=
 if /i "%HOST%"=="CoreCLR" (
     set RUNTIME_HOST=%~dp0Tools\DotNetCLI\Dotnet.exe
     set MSBUILD_CUSTOM_PATH=%~dp0Tools\MSBuild.exe
-    :: The LKG MSBuild on Core is too old to support
-    :: SourceLink targets, so disable them.
-    set SOURCE_LINK_ARGUMENT=/p:SourceLinkCreate=false /p:DebugType=full
 ) else if /i "%HOST%"=="Full" (
     set RUNTIME_HOST=
 ) else (
@@ -107,7 +104,7 @@ echo.
 echo ** Rebuilding MSBuild with downloaded binaries
 
 set MSBUILDLOGPATH=%~dp0msbuild_bootstrap_build-%HOST%.log
-call "%~dp0build.cmd" /t:Rebuild /p:Configuration=%BUILD_CONFIGURATION% /p:"SkipBuildPackages=true" %LOCALIZED_BUILD_ARGUMENT% %SYNC_XLF_ARGUMENT% %RUNTIMETYPE_ARGUMENT% %SOURCE_LINK_ARGUMENT%
+call "%~dp0build.cmd" /t:Rebuild /p:Configuration=%BUILD_CONFIGURATION% /p:"SkipBuildPackages=true" %LOCALIZED_BUILD_ARGUMENT% %SYNC_XLF_ARGUMENT% %RUNTIMETYPE_ARGUMENT%
 
 if %ERRORLEVEL% NEQ 0 (
     echo.

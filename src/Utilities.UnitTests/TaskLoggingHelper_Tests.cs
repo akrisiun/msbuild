@@ -9,7 +9,6 @@ using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Build.Shared;
-using Shouldly;
 using Xunit;
 
 namespace Microsoft.Build.UnitTests
@@ -24,68 +23,68 @@ namespace Microsoft.Build.UnitTests
             // normal
             string messageOnly;
             string code = t.Log.ExtractMessageCode("AL001: This is a message.", out messageOnly);
-            code.ShouldBe("AL001");
-            messageOnly.ShouldBe("This is a message.");
+            Assert.Equal("AL001", code);
+            Assert.Equal("This is a message.", messageOnly);
 
             // whitespace before code and after colon is ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("  AL001:   This is a message.", out messageOnly);
-            code.ShouldBe("AL001");
-            messageOnly.ShouldBe("This is a message.");
+            Assert.Equal("AL001", code);
+            Assert.Equal("This is a message.", messageOnly);
 
             // whitespace after colon is not ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("AL001 : This is a message.", out messageOnly);
-            code.ShouldBeNull();
-            messageOnly.ShouldBe("AL001 : This is a message.");
+            Assert.Null(code);
+            Assert.Equal("AL001 : This is a message.", messageOnly);
 
             // big code is ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("  RESGEN7905001:   This is a message.", out messageOnly);
-            code.ShouldBe("RESGEN7905001");
-            messageOnly.ShouldBe("This is a message.");
+            Assert.Equal("RESGEN7905001", code);
+            Assert.Equal("This is a message.", messageOnly);
 
             // small code is ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("R7: This is a message.", out messageOnly);
-            code.ShouldBe("R7");
-            messageOnly.ShouldBe("This is a message.");
+            Assert.Equal("R7", code);
+            Assert.Equal("This is a message.", messageOnly);
 
             // lowercase code is ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("alink3456: This is a message.", out messageOnly);
-            code.ShouldBe("alink3456");
-            messageOnly.ShouldBe("This is a message.");
+            Assert.Equal("alink3456", code);
+            Assert.Equal("This is a message.", messageOnly);
 
             // whitespace in code is not ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("  RES 7905:   This is a message.", out messageOnly);
-            code.ShouldBeNull();
-            messageOnly.ShouldBe("  RES 7905:   This is a message.");
+            Assert.Null(code);
+            Assert.Equal("  RES 7905:   This is a message.", messageOnly);
 
             // only digits in code is not ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("7905: This is a message.", out messageOnly);
-            code.ShouldBeNull();
-            messageOnly.ShouldBe("7905: This is a message.");
+            Assert.Null(code);
+            Assert.Equal("7905: This is a message.", messageOnly);
 
             // only letters in code is not ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("ALINK: This is a message.", out messageOnly);
-            code.ShouldBeNull();
-            messageOnly.ShouldBe("ALINK: This is a message.");
+            Assert.Null(code);
+            Assert.Equal("ALINK: This is a message.", messageOnly);
 
             // digits before letters in code is not ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("6780ALINK: This is a message.", out messageOnly);
-            code.ShouldBeNull();
-            messageOnly.ShouldBe("6780ALINK: This is a message.");
+            Assert.Null(code);
+            Assert.Equal("6780ALINK: This is a message.", messageOnly);
 
             // mixing digits and letters in code is not ok
             messageOnly = null;
             code = t.Log.ExtractMessageCode("LNK658A: This is a message.", out messageOnly);
-            code.ShouldBeNull();
-            messageOnly.ShouldBe("LNK658A: This is a message.");
+            Assert.Null(code);
+            Assert.Equal("LNK658A: This is a message.", messageOnly);
         }
 
         /// <summary>
@@ -105,15 +104,15 @@ namespace Microsoft.Build.UnitTests
 
             // This should return true since I am passing a canonical error as the stream
             StringReader sr = new StringReader("error MSB4040: There is no target in the project.");
-            t.Log.LogMessagesFromStream(sr, MessageImportance.High).ShouldBeTrue();
+            Assert.True(t.Log.LogMessagesFromStream(sr, MessageImportance.High));
 
             // This should return false since I am passing a canonical warning as the stream
             sr = new StringReader("warning ABCD123MyCode: Felix is a cat.");
-            t.Log.LogMessagesFromStream(sr, MessageImportance.Low).ShouldBeFalse();
+            Assert.False(t.Log.LogMessagesFromStream(sr, MessageImportance.Low));
 
             // This should return false since I am passing a non canonical message in the stream
             sr = new StringReader("Hello World");
-            t.Log.LogMessagesFromStream(sr, MessageImportance.High).ShouldBeFalse();
+            Assert.False(t.Log.LogMessagesFromStream(sr, MessageImportance.High));
         }
 
         [Fact]
@@ -124,7 +123,7 @@ namespace Microsoft.Build.UnitTests
             t.BuildEngine = mockEngine;
 
             t.Log.LogCommandLine("MySuperCommand");
-            mockEngine.Log.ShouldContain("MySuperCommand");
+            Assert.True(mockEngine.Log.Contains("MySuperCommand"));
         }
 
         /// <summary>
@@ -168,10 +167,10 @@ namespace Microsoft.Build.UnitTests
 
             t.Log.LogWarningFromResources("MyWarningResource", "foo");
 
-            mockEngine.Log.Contains("filename(1,2,3,4): Romulan error : Oops I wiped your harddrive foo").ShouldBeTrue();
-            mockEngine.Log.Contains("filename(1,2,3,4): Romulan warning : Be nice or I wipe your harddrive foo").ShouldBeTrue();
-            mockEngine.Log.Contains("Oops I wiped your harddrive foo").ShouldBeTrue();
-            mockEngine.Log.Contains("Be nice or I wipe your harddrive foo").ShouldBeTrue();
+            Assert.True(mockEngine.Log.Contains("filename(1,2,3,4): Romulan error : Oops I wiped your harddrive foo"));
+            Assert.True(mockEngine.Log.Contains("filename(1,2,3,4): Romulan warning : Be nice or I wipe your harddrive foo"));
+            Assert.True(mockEngine.Log.Contains("Oops I wiped your harddrive foo"));
+            Assert.True(mockEngine.Log.Contains("Be nice or I wipe your harddrive foo"));
         }
 
         [Fact]
@@ -198,18 +197,18 @@ namespace Microsoft.Build.UnitTests
                 t.BuildEngine = mockEngine;
                 t.Log.LogMessagesFromFile(file, MessageImportance.High);
 
-                mockEngine.Errors.ShouldBe(2);
-                mockEngine.Warnings.ShouldBe(1);
-                mockEngine.Messages.ShouldBe(3);
+                Assert.Equal(2, mockEngine.Errors);
+                Assert.Equal(1, mockEngine.Warnings);
+                Assert.Equal(3, mockEngine.Messages);
 
                 mockEngine = new MockEngine();
                 t = new MockTask();
                 t.BuildEngine = mockEngine;
                 t.Log.LogMessagesFromFile(file);
 
-                mockEngine.Errors.ShouldBe(2);
-                mockEngine.Warnings.ShouldBe(1);
-                mockEngine.Messages.ShouldBe(3);
+                Assert.Equal(2, mockEngine.Errors);
+                Assert.Equal(1, mockEngine.Warnings);
+                Assert.Equal(3, mockEngine.Messages);
             }
             finally
             {
@@ -220,7 +219,7 @@ namespace Microsoft.Build.UnitTests
         [Fact]
         public void CheckResourcesRegistered()
         {
-            Should.Throw<InvalidOperationException>(() =>
+            Assert.Throws<InvalidOperationException>(() =>
             {
                 Task t = new MockTask(false /*don't register resources*/);
 

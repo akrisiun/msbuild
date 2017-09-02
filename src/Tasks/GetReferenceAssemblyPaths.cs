@@ -84,7 +84,7 @@ namespace Microsoft.Build.Tasks
                 }
                 else
                 {
-                    return Array.Empty<string>();
+                    return new string[0];
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace Microsoft.Build.Tasks
                 }
                 else
                 {
-                    return Array.Empty<string>();
+                    return new string[0];
                 }
             }
         }

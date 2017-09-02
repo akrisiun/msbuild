@@ -165,7 +165,6 @@ namespace Microsoft.Build.Tasks
                             var fileInfo = new FileInfo(_filename);
                             IsReadOnly = fileInfo.IsReadOnly;
                             LastWriteTimeUtc = fileInfo.LastWriteTimeUtc;
-                            Length = fileInfo.Length;
                         }
                     }
                 }

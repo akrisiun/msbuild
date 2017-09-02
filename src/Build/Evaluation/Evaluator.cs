@@ -734,6 +734,7 @@ namespace Microsoft.Build.Evaluation
             ICollection<P> builtInProperties = AddBuiltInProperties();
             ICollection<P> environmentProperties = AddEnvironmentProperties();
             ICollection<P> toolsetProperties = AddToolsetProperties();
+            ICollection<P> subToolsetProperties = AddSubToolsetProperties();
             ICollection<P> globalProperties = AddGlobalProperties();
 
 #if FEATURE_MSBUILD_DEBUGGER
@@ -745,6 +746,7 @@ namespace Microsoft.Build.Evaluation
                 _initialLocals.Add(new KeyValuePair<string, object>(s_initialLocalsTypes[(int)LocalsTypes.BuiltIn].Name, builtInProperties));
                 _initialLocals.Add(new KeyValuePair<string, object>(s_initialLocalsTypes[(int)LocalsTypes.Environment].Name, environmentProperties));
                 _initialLocals.Add(new KeyValuePair<string, object>(s_initialLocalsTypes[(int)LocalsTypes.Toolset].Name, toolsetProperties));
+                _initialLocals.Add(new KeyValuePair<string, object>(s_initialLocalsTypes[(int)LocalsTypes.SubToolset].Name, subToolsetProperties));
                 _initialLocals.Add(new KeyValuePair<string, object>(s_initialLocalsTypes[(int)LocalsTypes.Global].Name, globalProperties));
 
                 DebuggerManager.DefineState(_projectRootElement.Location, _projectRootElement.ElementName, s_initialLocalsTypes);
@@ -791,10 +793,8 @@ namespace Microsoft.Build.Evaluation
             // Pass1: evaluate properties, load imports, and gather everything else
             PerformDepthFirstPass(_projectRootElement);
 
-            // Don't box via IEnumerator and foreach; cache count so not to evaluate via interface each iteration
-            var initialTargetsListCount = _initialTargetsList.Count;
-            List<string> initialTargets = new List<string>(initialTargetsListCount);
-            for (var i = 0; i < initialTargetsListCount; i++)
+            List<string> initialTargets = new List<string>(_initialTargetsList.Count);
+            for (int i = 0; i < _initialTargetsList.Count; i++)
             {
                 initialTargets.Add(EscapingUtilities.UnescapeAll(_initialTargetsList[i].Trim()));
             }
@@ -808,11 +808,9 @@ namespace Microsoft.Build.Evaluation
             DataCollection.CommentMarkProfile(8817, endPass1);
 #endif
             // Pass2: evaluate item definitions
-            // Don't box via IEnumerator and foreach; cache count so not to evaluate via interface each iteration
-            var itemsDefinitionGroupElementsCount = _itemDefinitionGroupElements.Count;
-            for (var i = 0; i < itemsDefinitionGroupElementsCount; i++)
+            foreach (ProjectItemDefinitionGroupElement itemDefinitionGroupElement in _itemDefinitionGroupElements)
             {
-                EvaluateItemDefinitionGroupElement(_itemDefinitionGroupElements[i]);
+                EvaluateItemDefinitionGroupElement(itemDefinitionGroupElement);
             }
 #if (!STANDALONEBUILD)
             CodeMarkers.Instance.CodeMarker(CodeMarkerEvent.perfMSBuildProjectEvaluatePass2End);
@@ -827,22 +825,18 @@ namespace Microsoft.Build.Evaluation
             lazyEvaluator = new LazyItemEvaluator<P, I, M, D>(_data, _itemFactory, _evaluationLoggingContext);
 
             // Pass3: evaluate project items
-            // Don't box via IEnumerator and foreach; cache count so not to evaluate via interface each iteration
-            var itemsGroupCount = _itemGroupElements.Count;
-            for (var i = 0; i < itemsGroupCount; i++)
+            foreach (ProjectItemGroupElement itemGroupElement in _itemGroupElements)
             {
-                EvaluateItemGroupElement(_itemGroupElements[i], lazyEvaluator);
+                EvaluateItemGroupElement(itemGroupElement, lazyEvaluator);
             }
 
             if (lazyEvaluator != null)
             {
+
                 // Tell the lazy evaluator to compute the items and add them to _data
                 IList<LazyItemEvaluator<P, I, M, D>.ItemData> items = lazyEvaluator.GetAllItems();
-                // Don't box via IEnumerator and foreach; cache count so not to evaluate via interface each iteration
-                var itemsCount = items.Count;
-                for (var i = 0; i < itemsCount; i++)
+                foreach (var itemData in items)
                 {
-                    var itemData = items[i];
                     if (itemData.ConditionResult)
                     {
                         _data.AddItem(itemData.Item);
@@ -871,26 +865,22 @@ namespace Microsoft.Build.Evaluation
             DataCollection.CommentMarkProfile(8819, endPass3);
 #endif
             // Pass4: evaluate using-tasks
-            // Don't box via IEnumerator and foreach; cache count so not to evaluate via interface each iteration
-            var entryCount = _usingTaskElements.Count;
-            for (var i = 0; i < entryCount; i++)
+            foreach (Pair<string, ProjectUsingTaskElement> entry in _usingTaskElements)
             {
-                var entry = _usingTaskElements[i];
                 EvaluateUsingTaskElement(entry.Key, entry.Value);
             }
 
             // If there was no DefaultTargets attribute found in the depth first pass, 
             // use the name of the first target. If there isn't any target, don't error until build time.
-
-            if (_data.DefaultTargets == null)
+            if (_data.DefaultTargets == null || _data.DefaultTargets.Count == 0)
             {
-                _data.DefaultTargets = new List<string>(1);
-            }
+                List<string> defaultTargets = new List<string>(_targetElements.Count);
+                if (_targetElements.Count > 0)
+                {
+                    defaultTargets.Add(_targetElements[0].Name);
+                }
 
-            var targetElementsCount = _targetElements.Count;
-            if (_data.DefaultTargets.Count == 0 && targetElementsCount > 0)
-            {
-                _data.DefaultTargets.Add(_targetElements[0].Name);
+                _data.DefaultTargets = defaultTargets;
             }
 
             Dictionary<string, List<TargetSpecification>> targetsWhichRunBeforeByTarget = new Dictionary<string, List<TargetSpecification>>(StringComparer.OrdinalIgnoreCase);
@@ -906,9 +896,9 @@ namespace Microsoft.Build.Evaluation
 #endif
 
             // Pass5: read targets (but don't evaluate them: that happens during build)
-            for (var i = 0; i < targetElementsCount; i++)
+            foreach (ProjectTargetElement targetElement in _targetElements)
             {
-                ReadTargetElement(_targetElements[i], activeTargetsByEvaluationOrder, activeTargets);
+                ReadTargetElement(targetElement, activeTargetsByEvaluationOrder, activeTargets);
             }
 
             foreach (ProjectTargetElement target in activeTargetsByEvaluationOrder)
@@ -974,11 +964,9 @@ namespace Microsoft.Build.Evaluation
             if (!Traits.Instance.EscapeHatches.IgnoreTreatAsLocalProperty)
             {
                 IList<string> globalPropertiesToTreatAsLocals = _expander.ExpandIntoStringListLeaveEscaped(currentProjectOrImport.TreatAsLocalProperty, ExpanderOptions.ExpandProperties, currentProjectOrImport.TreatAsLocalPropertyLocation);
-                // Don't box via IEnumerator and foreach; cache count so not to evaluate via interface each iteration
-                var globalPropertiesToTreatAsLocalsCount = globalPropertiesToTreatAsLocals.Count;
-                for (var i = 0; i < globalPropertiesToTreatAsLocalsCount; i++)
+
+                foreach (string propertyName in globalPropertiesToTreatAsLocals)
                 {
-                    var propertyName = globalPropertiesToTreatAsLocals[i];
                     XmlUtilities.VerifyThrowProjectValidElementName(propertyName, currentProjectOrImport.Location);
                     _data.GlobalPropertiesToTreatAsLocal.Add(propertyName);
                 }
@@ -1020,15 +1008,9 @@ namespace Microsoft.Build.Evaluation
             var implicitImports = currentProjectOrImport.GetImplicitImportNodes(currentProjectOrImport);
 
             // Evaluate the "top" implicit imports as if they were the first entry in the file.
-            // Don't box via IEnumerator and foreach; cache count so not to evaluate via interface each iteration
-            var implicitImportsCount = implicitImports.Count;
-            for (var i = 0; i < implicitImportsCount; i++)
+            foreach (var import in implicitImports.Where(i => i.ImplicitImportLocation == ImplicitImportLocation.Top))
             {
-                var import = implicitImports[i];
-                if (import.ImplicitImportLocation == ImplicitImportLocation.Top)
-                {
-                    EvaluateImportElement(currentProjectOrImport.DirectoryPath, import);
-                }
+                EvaluateImportElement(currentProjectOrImport.DirectoryPath, import);
             }
 
             foreach (ProjectElement element in currentProjectOrImport.Children)
@@ -1192,15 +1174,9 @@ namespace Microsoft.Build.Evaluation
             }
 
             // Evaluate the "bottom" implicit imports as if they were the last entry in the file.
-            // Don't box via IEnumerator and foreach; cache count so not to evaluate via interface each iteration
-            implicitImportsCount = implicitImports.Count;
-            for (var i = 0; i < implicitImportsCount; i++)
+            foreach (var import in implicitImports.Where(i => i.ImplicitImportLocation == ImplicitImportLocation.Bottom))
             {
-                var import = implicitImports[i];
-                if (import.ImplicitImportLocation == ImplicitImportLocation.Bottom)
-                {
-                    EvaluateImportElement(currentProjectOrImport.DirectoryPath, import);
-                }
+                EvaluateImportElement(currentProjectOrImport.DirectoryPath, import);
             }
 
 #if FEATURE_MSBUILD_DEBUGGER
@@ -1529,17 +1505,18 @@ namespace Microsoft.Build.Evaluation
                 toolsetProperties.Add(property);
             }
 
-            if (_data.SubToolsetVersion == null)
-            {
-                // In previous versions of MSBuild, there is almost always a subtoolset that adds a VisualStudioVersion property.  Since there
-                // is most likely not a subtoolset now, we need to add VisualStudioVersion if its not already a property.
-                if (!_data.Properties.Contains(Constants.VisualStudioVersionPropertyName))
-                {
-                    P subToolsetVersionProperty = _data.SetProperty(Constants.VisualStudioVersionPropertyName, MSBuildConstants.CurrentVisualStudioVersion, false /* NOT global property */, false /* may NOT be a reserved name */);
-                    toolsetProperties.Add(subToolsetVersionProperty);
-                }
-            }
-            else
+            return toolsetProperties;
+        }
+
+        /// <summary>
+        /// Put all the sub-toolset's properties into our property bag.  Run after 
+        /// AddToolsetProperties to ensure that, if there are any overlaps, the sub-toolset wins.
+        /// </summary>
+        private ICollection<P> AddSubToolsetProperties()
+        {
+            List<P> subToolsetProperties = new List<P>();
+
+            if (_data.SubToolsetVersion != null)
             {
                 SubToolset subToolset = null;
 
@@ -1549,7 +1526,7 @@ namespace Microsoft.Build.Evaluation
                 if (!_data.Properties.Contains(Constants.SubToolsetVersionPropertyName))
                 {
                     P subToolsetVersionProperty = _data.SetProperty(Constants.SubToolsetVersionPropertyName, _data.SubToolsetVersion, false /* NOT global property */, false /* may NOT be a reserved name */);
-                    toolsetProperties.Add(subToolsetVersionProperty);
+                    subToolsetProperties.Add(subToolsetVersionProperty);
                 }
 
                 if (_data.Toolset.SubToolsets.TryGetValue(_data.SubToolsetVersion, out subToolset))
@@ -1557,12 +1534,12 @@ namespace Microsoft.Build.Evaluation
                     foreach (ProjectPropertyInstance subToolsetProperty in subToolset.Properties.Values)
                     {
                         P property = _data.SetProperty(subToolsetProperty.Name, ((IProperty)subToolsetProperty).EvaluatedValueEscaped, false /* NOT global property */, false /* may NOT be a reserved name */);
-                        toolsetProperties.Add(property);
+                        subToolsetProperties.Add(property);
                     }
                 }
             }
 
-            return toolsetProperties;
+            return subToolsetProperties;
         }
 
         /// <summary>
@@ -1572,7 +1549,7 @@ namespace Microsoft.Build.Evaluation
         {
             if (_data.GlobalPropertiesDictionary == null)
             {
-                return Array.Empty<P>();
+                return ReadOnlyEmptyList<P>.Instance;
             }
 
             List<P> globalProperties = new List<P>(_data.GlobalPropertiesDictionary.Count);
@@ -2393,8 +2370,8 @@ namespace Microsoft.Build.Evaluation
             {
                 if (_logProjectImportedEvents)
                 {
-                    // Expand the expression for the Log.  Since we know the condition evaluated to false, leave unexpandable properties in the condition so as not to cause an error
-                    string expanded = _expander.ExpandIntoStringAndUnescape(importElement.Condition, ExpanderOptions.ExpandProperties | ExpanderOptions.LeavePropertiesUnexpandedOnError, importElement.ConditionLocation);
+                    // Expand the expression for the Log.
+                    string expanded = _expander.ExpandIntoStringAndUnescape(importElement.Condition, ExpanderOptions.ExpandProperties, importElement.ConditionLocation);
 
                     ProjectImportedEventArgs eventArgs = new ProjectImportedEventArgs(
                         importElement.Location.Line,
@@ -2481,7 +2458,7 @@ namespace Microsoft.Build.Evaluation
                     }
 
                     // Expand the wildcards and provide an alphabetical order list of import statements.
-                    importFilesEscaped = EngineFileUtilities.GetFileListEscaped(directoryOfImportingFile, importExpressionEscapedItem, forceEvaluate: true);
+                    importFilesEscaped = EngineFileUtilities.GetFileListEscaped(directoryOfImportingFile, importExpressionEscapedItem);
                 }
                 catch (Exception ex) when (ExceptionHandling.IsIoRelatedException(ex))
                 {

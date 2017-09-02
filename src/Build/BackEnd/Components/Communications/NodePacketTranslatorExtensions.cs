@@ -103,7 +103,7 @@ namespace Microsoft.Build.BackEnd
                     return constructor;
                 });
 
-            var targetInstanceChild = (INodePacketTranslatable) parameterlessConstructor.Invoke(Array.Empty<object>());
+            var targetInstanceChild = (INodePacketTranslatable) parameterlessConstructor.Invoke(new object[0]);
 
             targetInstanceChild.Translate(translator);
 

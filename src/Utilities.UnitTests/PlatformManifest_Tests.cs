@@ -8,7 +8,6 @@ using System.Linq;
 
 using Microsoft.Build.Utilities;
 using Microsoft.Build.Shared;
-using Shouldly;
 using Xunit;
 
 namespace Microsoft.Build.UnitTests
@@ -26,7 +25,7 @@ namespace Microsoft.Build.UnitTests
         {
             PlatformManifest manifest = new PlatformManifest("|||||||");
 
-            manifest.ReadError.ShouldBeTrue();
+            Assert.True(manifest.ReadError);
         }
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace Microsoft.Build.UnitTests
                 manifestDirectory = FileUtilities.GetTemporaryDirectory();
                 PlatformManifest manifest = new PlatformManifest(manifestDirectory);
 
-                manifest.ReadError.ShouldBeTrue();
+                Assert.True(manifest.ReadError);
             }
             finally
             {
@@ -68,7 +67,7 @@ namespace Microsoft.Build.UnitTests
                 File.WriteAllText(Path.Combine(manifestDirectory, "SomeOtherFile.xml"), "hello");
                 PlatformManifest manifest = new PlatformManifest(manifestDirectory);
 
-                manifest.ReadError.ShouldBeTrue();
+                Assert.True(manifest.ReadError);
             }
             finally
             {
@@ -89,7 +88,7 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.ReadError.ShouldBeTrue();
+                Assert.True(manifest.Manifest.ReadError);
             }
         }
 
@@ -103,13 +102,13 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.ReadError.ShouldBeFalse();
-                manifest.Manifest.Name.ShouldBe("UAP");
-                manifest.Manifest.FriendlyName.ShouldBe("Universal Application Platform");
-                manifest.Manifest.PlatformVersion.ShouldBe("1.0.0.0");
+                Assert.False(manifest.Manifest.ReadError);
+                Assert.Equal("UAP", manifest.Manifest.Name);
+                Assert.Equal("Universal Application Platform", manifest.Manifest.FriendlyName);
+                Assert.Equal("1.0.0.0", manifest.Manifest.PlatformVersion);
 
-                manifest.Manifest.DependentPlatforms.Count.ShouldBe(0);
-                manifest.Manifest.ApiContracts.Count.ShouldBe(0);
+                Assert.Equal(0, manifest.Manifest.DependentPlatforms.Count);
+                Assert.Equal(0, manifest.Manifest.ApiContracts.Count);
             }
         }
 
@@ -124,13 +123,13 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.ReadError.ShouldBeFalse();
-                manifest.Manifest.Name.ShouldBe("UAP");
-                manifest.Manifest.FriendlyName.ShouldBe(String.Empty);
-                manifest.Manifest.PlatformVersion.ShouldBe("1.0.0.0");
+                Assert.False(manifest.Manifest.ReadError);
+                Assert.Equal("UAP", manifest.Manifest.Name);
+                Assert.Equal(String.Empty, manifest.Manifest.FriendlyName);
+                Assert.Equal("1.0.0.0", manifest.Manifest.PlatformVersion);
 
-                manifest.Manifest.DependentPlatforms.Count.ShouldBe(0);
-                manifest.Manifest.ApiContracts.Count.ShouldBe(0);
+                Assert.Equal(0, manifest.Manifest.DependentPlatforms.Count);
+                Assert.Equal(0, manifest.Manifest.ApiContracts.Count);
             }
         }
 
@@ -147,14 +146,14 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.ReadError.ShouldBeFalse();
+                Assert.False(manifest.Manifest.ReadError);
 
-                manifest.Manifest.ApiContracts.Count.ShouldBe(0);
-                manifest.Manifest.DependentPlatforms.Count.ShouldBe(1);
+                Assert.Equal(0, manifest.Manifest.ApiContracts.Count);
+                Assert.Equal(1, manifest.Manifest.DependentPlatforms.Count);
 
                 List<PlatformManifest.DependentPlatform> platforms = new List<PlatformManifest.DependentPlatform>(manifest.Manifest.DependentPlatforms);
-                platforms[0].Name.ShouldBe(String.Empty);
-                platforms[0].Version.ShouldBe("1.0.0.0");
+                Assert.Equal(String.Empty, platforms[0].Name);
+                Assert.Equal("1.0.0.0", platforms[0].Version);
             }
         }
 
@@ -172,18 +171,18 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.ReadError.ShouldBeFalse();
+                Assert.False(manifest.Manifest.ReadError);
 
-                manifest.Manifest.ApiContracts.Count.ShouldBe(0);
-                manifest.Manifest.DependentPlatforms.Count.ShouldBe(3);
+                Assert.Equal(0, manifest.Manifest.ApiContracts.Count);
+                Assert.Equal(3, manifest.Manifest.DependentPlatforms.Count);
 
                 List<PlatformManifest.DependentPlatform> platforms = new List<PlatformManifest.DependentPlatform>(manifest.Manifest.DependentPlatforms);
-                platforms[0].Name.ShouldBe("UAP");
-                platforms[0].Version.ShouldBe("1.0.0.0");
-                platforms[1].Name.ShouldBe("UAP");
-                platforms[1].Version.ShouldBe("1.0.2.3");
-                platforms[2].Name.ShouldBe("MyPlatform");
-                platforms[2].Version.ShouldBe("8.8.8.8");
+                Assert.Equal("UAP", platforms[0].Name);
+                Assert.Equal("1.0.0.0", platforms[0].Version);
+                Assert.Equal("UAP", platforms[1].Name);
+                Assert.Equal("1.0.2.3", platforms[1].Version);
+                Assert.Equal("MyPlatform", platforms[2].Name);
+                Assert.Equal("8.8.8.8", platforms[2].Version);
             }
         }
 
@@ -203,17 +202,17 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.ReadError.ShouldBeFalse();
+                Assert.False(manifest.Manifest.ReadError);
 
-                manifest.Manifest.DependentPlatforms.Count.ShouldBe(1);
+                Assert.Equal(1, manifest.Manifest.DependentPlatforms.Count);
                 PlatformManifest.DependentPlatform platform = manifest.Manifest.DependentPlatforms.First();
-                platform.Name.ShouldBe("UAP");
-                platform.Version.ShouldBe("1.0.2.3");
+                Assert.Equal("UAP", platform.Name);
+                Assert.Equal("1.0.2.3", platform.Version);
 
-                manifest.Manifest.ApiContracts.Count.ShouldBe(1);
+                Assert.Equal(1, manifest.Manifest.ApiContracts.Count);
                 ApiContract contract = manifest.Manifest.ApiContracts.First();
-                contract.Name.ShouldBe("System");
-                contract.Version.ShouldBe(String.Empty);
+                Assert.Equal("System", contract.Name);
+                Assert.Equal(String.Empty, contract.Version);
             }
         }
 
@@ -233,19 +232,19 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.ReadError.ShouldBeFalse();
+                Assert.False(manifest.Manifest.ReadError);
 
-                manifest.Manifest.DependentPlatforms.Count.ShouldBe(0);
-                manifest.Manifest.ApiContracts.Count.ShouldBe(3);
+                Assert.Equal(0, manifest.Manifest.DependentPlatforms.Count);
+                Assert.Equal(3, manifest.Manifest.ApiContracts.Count);
 
                 List<ApiContract> contracts = new List<ApiContract>(manifest.Manifest.ApiContracts);
 
-                contracts[0].Name.ShouldBe("System");
-                contracts[0].Version.ShouldBe("1.2.0.4");
-                contracts[1].Name.ShouldBe("Windows.Foundation");
-                contracts[1].Version.ShouldBe("1.0.0.0");
-                contracts[2].Name.ShouldBe("Windows.Foundation.OtherStuff");
-                contracts[2].Version.ShouldBe("1.5.0.0");
+                Assert.Equal("System", contracts[0].Name);
+                Assert.Equal("1.2.0.4", contracts[0].Version);
+                Assert.Equal("Windows.Foundation", contracts[1].Name);
+                Assert.Equal("1.0.0.0", contracts[1].Version);
+                Assert.Equal("Windows.Foundation.OtherStuff", contracts[2].Name);
+                Assert.Equal("1.5.0.0", contracts[2].Version);
             }
         }
 
@@ -257,7 +256,7 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.VersionedContent.ShouldBeFalse();
+                Assert.False(manifest.Manifest.VersionedContent);
             }
         }
 
@@ -270,7 +269,7 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.VersionedContent.ShouldBeFalse();
+                Assert.False(manifest.Manifest.VersionedContent);
             }
         }
 
@@ -283,7 +282,7 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.VersionedContent.ShouldBeFalse();
+                Assert.False(manifest.Manifest.VersionedContent);
             }
         }
 
@@ -296,7 +295,7 @@ namespace Microsoft.Build.UnitTests
 
             using (TemporaryPlatformManifest manifest = new TemporaryPlatformManifest(contents))
             {
-                manifest.Manifest.VersionedContent.ShouldBeTrue();
+                Assert.True(manifest.Manifest.VersionedContent);
             }
         }
 

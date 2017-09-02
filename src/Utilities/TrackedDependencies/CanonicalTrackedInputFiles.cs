@@ -269,7 +269,7 @@ namespace Microsoft.Build.Utilities
             if (_sourcesNeedingCompilation.Length == 0)
             {
                 FileTracker.LogMessageFromResources(_log, MessageImportance.Normal, "Tracking_AllOutputsAreUpToDate");
-                _sourcesNeedingCompilation = Array.Empty<ITaskItem>();
+                _sourcesNeedingCompilation = new ITaskItem[0];
             }
             else
             {
@@ -427,7 +427,7 @@ namespace Microsoft.Build.Utilities
                 {
                     // All sources and outputs exist, and the oldest output is newer than the newest input -- we're up to date!
                     FileTracker.LogMessageFromResources(_log, MessageImportance.Normal, "Tracking_AllOutputsAreUpToDate");
-                    return Array.Empty<ITaskItem>();
+                    return new ITaskItem[0];
                 }
             }
 

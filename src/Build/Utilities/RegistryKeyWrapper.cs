@@ -135,7 +135,7 @@ namespace Microsoft.Build.Internal
         {
             try
             {
-                return Exists() ? WrappedKey.GetValueNames() : Array.Empty<string>();
+                return Exists() ? WrappedKey.GetValueNames() : new string[] { };
             }
             catch (Exception ex)
             {
@@ -154,7 +154,7 @@ namespace Microsoft.Build.Internal
         {
             try
             {
-                return Exists() ? WrappedKey.GetSubKeyNames() : Array.Empty<string>();
+                return Exists() ? WrappedKey.GetSubKeyNames() : new string[] { };
             }
             catch (Exception ex)
             {

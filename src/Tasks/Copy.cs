@@ -355,7 +355,7 @@ namespace Microsoft.Build.Tasks
             {
                 FileUtilities.DeleteNoThrow(destinationFileState.Name);
             }
-
+            
             linkCreated = createLink(sourceFileState.Name, destinationFileState.Name, errorMessage);
 
             if (!linkCreated)
@@ -399,8 +399,8 @@ namespace Microsoft.Build.Tasks
             // If there are no source files then just return success.
             if (_sourceFiles == null || _sourceFiles.Length == 0)
             {
-                _destinationFiles = Array.Empty<TaskItem>();
-                _copiedFiles = Array.Empty<TaskItem>();
+                _destinationFiles = new TaskItem[0];
+                _copiedFiles = new TaskItem[0];
                 return true;
             }
 
@@ -539,7 +539,7 @@ namespace Microsoft.Build.Tasks
                     {
                         Log.LogErrorWithCodeFromResources("Copy.Error", _sourceFiles[i].ItemSpec, _destinationFolder.ItemSpec, e.Message);
                         // Clear the outputs.
-                        _destinationFiles = Array.Empty<ITaskItem>();
+                        _destinationFiles = new ITaskItem[0];
                         return false;
                     }
 
@@ -680,9 +680,7 @@ namespace Microsoft.Build.Tasks
                     if (retries < Retries)
                     {
                         retries++;
-                        Log.LogWarningWithCodeFromResources("Copy.Retrying", sourceFileState.Name,
-                            destinationFileState.Name, retries, RetryDelayMilliseconds, e.Message,
-                            GetLockedFileMessage(destinationFileState.Name));
+                        Log.LogWarningWithCodeFromResources("Copy.Retrying", sourceFileState.Name, destinationFileState.Name, retries, RetryDelayMilliseconds, e.Message);
 
                         // if we have to retry for some reason, wipe the state -- it may not be correct anymore. 
                         destinationFileState.Reset();
@@ -693,8 +691,7 @@ namespace Microsoft.Build.Tasks
                     else if (Retries > 0)
                     {
                         // Exception message is logged in caller
-                        Log.LogErrorWithCodeFromResources("Copy.ExceededRetries", sourceFileState.Name,
-                            destinationFileState.Name, Retries, GetLockedFileMessage(destinationFileState.Name));
+                        Log.LogErrorWithCodeFromResources("Copy.ExceededRetries", sourceFileState.Name, destinationFileState.Name, Retries);
                         throw;
                     }
                     else
@@ -706,9 +703,7 @@ namespace Microsoft.Build.Tasks
                 if (retries < Retries)
                 {
                     retries++;
-                    Log.LogWarningWithCodeFromResources("Copy.Retrying", sourceFileState.Name,
-                        destinationFileState.Name, retries, RetryDelayMilliseconds, String.Empty /* no details */,
-                        GetLockedFileMessage(destinationFileState.Name));
+                    Log.LogWarningWithCodeFromResources("Copy.Retrying", sourceFileState.Name, destinationFileState.Name, retries, RetryDelayMilliseconds, String.Empty /* no details */);
 
                     // if we have to retry for some reason, wipe the state -- it may not be correct anymore. 
                     destinationFileState.Reset();
@@ -717,8 +712,7 @@ namespace Microsoft.Build.Tasks
                 }
                 else if (Retries > 0)
                 {
-                    Log.LogErrorWithCodeFromResources("Copy.ExceededRetries", sourceFileState.Name,
-                        destinationFileState.Name, Retries, GetLockedFileMessage(destinationFileState.Name));
+                    Log.LogErrorWithCodeFromResources("Copy.ExceededRetries", sourceFileState.Name, destinationFileState.Name, Retries);
                     return false;
                 }
                 else
@@ -729,29 +723,6 @@ namespace Microsoft.Build.Tasks
 
             // Canceling
             return false;
-        }
-
-        /// <summary>
-        /// Try to get a message to inform the user which processes have a lock on a given file.
-        /// </summary>
-        private string GetLockedFileMessage(string file)
-        {
-            string message = string.Empty;
-#if !RUNTIME_TYPE_NETCORE && !MONO
-
-            try
-            {
-                var processes = LockCheck.GetProcessesLockingFile(file);
-                message = !string.IsNullOrEmpty(processes)
-                    ? ResourceUtilities.FormatResourceString("Copy.FileLocked", processes)
-                    : String.Empty;
-            }
-            catch (Exception)
-            {
-                // Never throw if we can't get the processes locking the file.
-            }
-#endif
-            return message;
         }
 
         /// <summary>

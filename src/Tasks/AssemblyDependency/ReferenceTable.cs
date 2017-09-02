@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -12,7 +11,6 @@ using System.Runtime.Versioning;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Shared;
-using Microsoft.Build.Tasks.AssemblyDependency;
 using Microsoft.Build.Utilities;
 #if (!STANDALONEBUILD)
 using Microsoft.Internal.Performance;
@@ -44,7 +42,7 @@ namespace Microsoft.Build.Tasks
         private Dictionary<AssemblyNameExtension, Reference> _references = new Dictionary<AssemblyNameExtension, Reference>(AssemblyNameComparer.GenericComparer);
 
         /// <summary>The table of remapped assemblies. Used for Unification.</summary>
-        private DependentAssembly[] _remappedAssemblies = Array.Empty<DependentAssembly>();
+        private DependentAssembly[] _remappedAssemblies = new DependentAssembly[0];
         /// <summary>If true, then search for dependencies.</summary>
         private bool _findDependencies = true;
         /// <summary>
@@ -161,8 +159,6 @@ namespace Microsoft.Build.Tasks
         /// </summary>
         private WarnOrErrorOnTargetArchitectureMismatchBehavior _warnOrErrorOnTargetArchitectureMismatch = WarnOrErrorOnTargetArchitectureMismatchBehavior.Warning;
 
-        private readonly ConcurrentDictionary<string, AssemblyMetadata> _assemblyMetadataCache;
-
         /// <summary>
         /// When we exclude an assembly from resolution because it is part of out exclusion list we need to let the user know why this is. 
         /// There can be a number of reasons each for un-resolving a reference, these reasons are encapsulated by a different black list. We need to log a specific message 
@@ -182,7 +178,7 @@ namespace Microsoft.Build.Tasks
         /// </summary>
         /// <param name="findDependencies">If true, then search for dependencies.</param>
         /// <param name="findSatellites">If true, then search for satellite files.</param>
-        /// <param name="findSerializationAssemblies">If true, then search for serialization assembly files.</param>
+        /// <param name="findSerializatoinAssemblies">If true, then search for serialization assembly files.</param>
         /// <param name="findRelatedFiles">If true, then search for related files.</param>
         /// <param name="searchPaths">Paths to search for dependent assemblies on.</param>
         /// <param name="candidateAssemblyFiles">List of literal assembly file names to be considered when SearchPaths has {CandidateAssemblyFiles}.</param>
@@ -197,7 +193,6 @@ namespace Microsoft.Build.Tasks
         /// <param name="getAssemblyMetadata">Delegate used for finding dependencies of a file.</param>
         /// <param name="getRegistrySubKeyNames">Used to get registry subkey names.</param>
         /// <param name="getRegistrySubKeyDefaultValue">Used to get registry default values.</param>
-        /// <param name="assemblyMetadataCache">Cache of metadata already read from paths.</param>
         internal ReferenceTable
         (
             IBuildEngine buildEngine,
@@ -237,8 +232,8 @@ namespace Microsoft.Build.Tasks
             ReadMachineTypeFromPEHeader readMachineTypeFromPEHeader,
             WarnOrErrorOnTargetArchitectureMismatchBehavior warnOrErrorOnTargetArchitectureMismatch,
             bool ignoreFrameworkAttributeVersionMismatch,
-            bool unresolveFrameworkAssembliesFromHigherFrameworks,
-            ConcurrentDictionary<string, AssemblyMetadata> assemblyMetadataCache)
+            bool unresolveFrameworkAssembliesFromHigherFrameworks
+        )
         {
             _buildEngine = buildEngine;
             _log = log;
@@ -271,7 +266,6 @@ namespace Microsoft.Build.Tasks
             _readMachineTypeFromPEHeader = readMachineTypeFromPEHeader;
             _warnOrErrorOnTargetArchitectureMismatch = warnOrErrorOnTargetArchitectureMismatch;
             _ignoreFrameworkAttributeVersionMismatch = ignoreFrameworkAttributeVersionMismatch;
-            _assemblyMetadataCache = assemblyMetadataCache;
 
             // Set condition for when to check assembly version against the target framework version 
             _checkAssemblyVersionAgainstTargetFrameworkVersion = unresolveFrameworkAssembliesFromHigherFrameworks || ((_projectTargetFramework ?? ReferenceTable.s_targetFrameworkVersion_40) <= ReferenceTable.s_targetFrameworkVersion_40);
@@ -1012,7 +1006,6 @@ namespace Microsoft.Build.Tasks
             _getAssemblyMetadata
             (
                 reference.FullPath,
-                _assemblyMetadataCache,
                 out dependentAssemblies,
                 out scatterFiles,
                 out frameworkName
@@ -2441,13 +2434,13 @@ namespace Microsoft.Build.Tasks
             out ITaskItem[] copyLocalFiles
         )
         {
-            primaryFiles = Array.Empty<ITaskItem>();
-            dependencyFiles = Array.Empty<ITaskItem>();
-            relatedFiles = Array.Empty<ITaskItem>();
-            satelliteFiles = Array.Empty<ITaskItem>();
-            serializationAssemblyFiles = Array.Empty<ITaskItem>();
-            scatterFiles = Array.Empty<ITaskItem>();
-            copyLocalFiles = Array.Empty<ITaskItem>();
+            primaryFiles = new ITaskItem[0];
+            dependencyFiles = new ITaskItem[0];
+            relatedFiles = new ITaskItem[0];
+            satelliteFiles = new ITaskItem[0];
+            serializationAssemblyFiles = new ITaskItem[0];
+            scatterFiles = new ITaskItem[0];
+            copyLocalFiles = new ITaskItem[0];
 
             ArrayList primaryItems = new ArrayList();
             ArrayList dependencyItems = new ArrayList();
@@ -2518,7 +2511,7 @@ namespace Microsoft.Build.Tasks
             scatterFiles = (ITaskItem[])scatterItems.ToArray(typeof(ITaskItem));
 
             // Sort for stable outputs. (These came from a hashtable, which as undefined enumeration order.)
-            Array.Sort(primaryFiles, TaskItemSpecFilenameComparer.Comparer);
+            Array.Sort(primaryFiles, TaskItemSpecFilenameComparer.comparer);
 
             // Find the copy-local items.
             FindCopyLocalItems(primaryFiles, copyLocalItems);

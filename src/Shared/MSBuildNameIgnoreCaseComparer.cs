@@ -32,6 +32,11 @@ namespace Microsoft.Build.Collections
         private static MSBuildNameIgnoreCaseComparer s_immutableComparer = new MSBuildNameIgnoreCaseComparer(true /* immutable */);
 
         /// <summary>
+        /// The default mutable comparer instance that will ideally be shared by all users who need a mutable comparer. 
+        /// </summary>
+        private static MSBuildNameIgnoreCaseComparer s_mutableComparer = new MSBuildNameIgnoreCaseComparer(false /* mutable */);
+
+        /// <summary>
         /// The processor architecture on which we are running, but default it will be x86
         /// </summary>
         private static NativeMethodsShared.ProcessorArchitectures s_runningProcessorArchitecture = NativeMethodsShared.ProcessorArchitectures.X86;
@@ -94,7 +99,10 @@ namespace Microsoft.Build.Collections
         /// <summary>
         /// The default mutable comparer instance.
         /// </summary>
-        internal static MSBuildNameIgnoreCaseComparer Mutable => new MSBuildNameIgnoreCaseComparer(immutable: false);
+        internal static MSBuildNameIgnoreCaseComparer Mutable
+        {
+            get { return s_mutableComparer; }
+        }
 
         /// <summary>
         /// Performs the "Equals" operation on two MSBuild property, item or metadata names

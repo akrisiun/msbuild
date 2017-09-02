@@ -159,7 +159,7 @@ namespace Microsoft.Build.Tasks
         {
             if (_redistList == null)
             {
-                return Array.Empty<AssemblyEntry>();
+                return new AssemblyEntry[0];
             }
 
             return _redistList.FindAssemblyNameFromSimpleName(simpleName);

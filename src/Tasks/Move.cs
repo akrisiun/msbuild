@@ -111,8 +111,8 @@ namespace Microsoft.Build.Tasks
             // If there are no source files then just return success.
             if (SourceFiles == null || SourceFiles.Length == 0)
             {
-                DestinationFiles = Array.Empty<TaskItem>();
-                _movedFiles = Array.Empty<TaskItem>();
+                DestinationFiles = new TaskItem[0];
+                _movedFiles = new TaskItem[0];
                 return true;
             }
 
@@ -155,7 +155,7 @@ namespace Microsoft.Build.Tasks
                         Log.LogErrorWithCodeFromResources("Move.Error", SourceFiles[i].ItemSpec, DestinationFolder.ItemSpec, e.Message);
 
                         // Clear the outputs.
-                        DestinationFiles = Array.Empty<ITaskItem>();
+                        DestinationFiles = new ITaskItem[0];
                         return false;
                     }
 

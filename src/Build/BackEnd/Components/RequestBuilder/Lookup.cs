@@ -582,7 +582,7 @@ namespace Microsoft.Build.BackEnd
             {
                 // We can just hand out this group verbatim -
                 // that avoids any importing
-                groupFound = groupFound ?? Array.Empty<ProjectItemInstance>();
+                groupFound = groupFound ?? ReadOnlyEmptyList<ProjectItemInstance>.Instance;
 
                 return groupFound;
             }

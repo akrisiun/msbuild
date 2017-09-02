@@ -1547,7 +1547,7 @@ namespace Microsoft.Build.Execution
         /// </remarks>
         public bool Build(string target, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
         {
-            string[] targets = (target == null) ? Array.Empty<string>() : new string[] { target };
+            string[] targets = (target == null) ? new string[] { } : new string[] { target };
 
             return Build(targets, loggers, remoteLoggers);
         }
@@ -1886,11 +1886,11 @@ namespace Microsoft.Build.Execution
         /// </summary>
         internal static ProjectInstance[] LoadSolutionForBuild(string projectFile, PropertyDictionary<ProjectPropertyInstance> globalPropertiesInstances, string toolsVersion, BuildParameters buildParameters, ILoggingService loggingService, BuildEventContext projectBuildEventContext, bool isExplicitlyLoaded, IReadOnlyCollection<string> targetNames)
         {
-            //ErrorUtilities.VerifyThrowArgumentLength(projectFile, "projectFile");
-            //ErrorUtilities.VerifyThrowArgumentNull(globalPropertiesInstances, "globalPropertiesInstances");
-            //ErrorUtilities.VerifyThrowArgumentLengthIfNotNull(toolsVersion, "toolsVersion");
-            //ErrorUtilities.VerifyThrowArgumentNull(buildParameters, "buildParameters");
-            //ErrorUtilities.VerifyThrow(FileUtilities.IsSolutionFilename(projectFile), "Project file {0} is not a solution.", projectFile);
+            ErrorUtilities.VerifyThrowArgumentLength(projectFile, "projectFile");
+            ErrorUtilities.VerifyThrowArgumentNull(globalPropertiesInstances, "globalPropertiesInstances");
+            ErrorUtilities.VerifyThrowArgumentLengthIfNotNull(toolsVersion, "toolsVersion");
+            ErrorUtilities.VerifyThrowArgumentNull(buildParameters, "buildParameters");
+            ErrorUtilities.VerifyThrow(FileUtilities.IsSolutionFilename(projectFile), "Project file {0} is not a solution.", projectFile);
 
             ProjectInstance[] projectInstances = null;
 
@@ -1989,7 +1989,7 @@ namespace Microsoft.Build.Execution
 
             if (null == targets)
             {
-                targets = Array.Empty<string>();
+                targets = new string[] { };
             }
 
             BuildResult results;
@@ -2068,7 +2068,7 @@ namespace Microsoft.Build.Execution
             }
             else
             {
-                return Array.Empty<TargetSpecification>();
+                return ReadOnlyEmptyList<TargetSpecification>.Instance;
             }
         }
 
@@ -2085,7 +2085,7 @@ namespace Microsoft.Build.Execution
             }
             else
             {
-                return Array.Empty<TargetSpecification>();
+                return ReadOnlyEmptyList<TargetSpecification>.Instance;
             }
         }
 

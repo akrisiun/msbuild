@@ -11,7 +11,6 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Shared;
 using Xunit;
 using Microsoft.Build.Utilities;
-using Shouldly;
 
 namespace Microsoft.Build.UnitTests
 {
@@ -183,7 +182,7 @@ namespace Microsoft.Build.UnitTests
                 t.BuildEngine = engine;
                 t.ToolPath = NativeMethodsShared.IsWindows ? @"C:\MyAlternatePath" : "/MyAlternatePath";
 
-                t.Execute().ShouldBeFalse();
+                Assert.False(t.Execute());
 
                 // There should be an error about invalid task location.
                 engine.AssertLogContains("MSB6004");
@@ -209,8 +208,8 @@ namespace Microsoft.Build.UnitTests
                 t.MockCommandLineCommands = new String('x', 32001);
 
                 // It's only a warning, we still succeed
-                t.Execute().ShouldBeTrue();
-                t.ExitCode.ShouldBe(0);
+                Assert.True(t.Execute());
+                Assert.Equal(0, t.ExitCode);
                 // There should be a warning about the command-line being too long.
                 engine.AssertLogContains("MSB6002");
             }
@@ -228,8 +227,8 @@ namespace Microsoft.Build.UnitTests
                 t.BuildEngine = engine;
                 t.MockCommandLineCommands = NativeMethodsShared.IsWindows ? "/C garbagegarbagegarbagegarbage.exe" : "-c garbagegarbagegarbagegarbage.exe";
 
-                t.Execute().ShouldBeFalse();
-                t.ExitCode.ShouldBe(NativeMethodsShared.IsWindows ? 1 : 127); // cmd.exe error code is 1, sh error code is 127
+                Assert.False(t.Execute());
+                Assert.Equal(NativeMethodsShared.IsWindows ? 1 : 127, t.ExitCode); // cmd.exe error code is 1, sh error code is 127
 
                 // We just tried to run "cmd.exe /C garbagegarbagegarbagegarbage.exe".  This should fail,
                 // but since "cmd.exe" doesn't log its errors in canonical format, no errors got
@@ -256,15 +255,15 @@ namespace Microsoft.Build.UnitTests
                                                 ? "/C echo Main.cs(17,20): error CS0168: The variable 'foo' is declared but never used"
                                                 : @"-c """"""echo Main.cs\(17,20\): error CS0168: The variable 'foo' is declared but never used""""""";
 
-                t.Execute().ShouldBeFalse();
+                Assert.False(t.Execute());
 
                 // The above command logged a canonical error message.  Therefore ToolTask should
                 // not log its own error beyond that.
                 engine.AssertLogDoesntContain("MSB6006");
                 engine.AssertLogContains("CS0168");
                 engine.AssertLogContains("The variable 'foo' is declared but never used");
-                t.ExitCode.ShouldBe(-1);
-                engine.Errors.ShouldBe(1);
+                Assert.Equal(-1, t.ExitCode);
+                Assert.Equal(1, engine.Errors);
             }
         }
 
@@ -284,7 +283,7 @@ namespace Microsoft.Build.UnitTests
                                             : @"-c """"""echo hello world {""""""";
             t.Execute();
             engine.AssertLogContains("echo hello world {");
-            engine.Errors.ShouldBe(0);
+            Assert.Equal(0, engine.Errors);
         }
 
         /// <summary>
@@ -301,12 +300,12 @@ namespace Microsoft.Build.UnitTests
                                                 ? "/C Echo 'Who made you king anyways' 1>&2"
                                                 : @"-c """"""echo Who made you king anyways 1>&2""""""";
 
-                t.Execute().ShouldBeTrue();
+                Assert.True(t.Execute());
 
                 engine.AssertLogDoesntContain("MSB");
                 engine.AssertLogContains("Who made you king anyways");
-                t.ExitCode.ShouldBe(0);
-                engine.Errors.ShouldBe(0);
+                Assert.Equal(0, t.ExitCode);
+                Assert.Equal(0, engine.Errors);
             }
         }
 
@@ -325,12 +324,12 @@ namespace Microsoft.Build.UnitTests
                                                 ? "/C Echo 'Who made you king anyways'"
                                                 : @"-c """"""echo Who made you king anyways""""""";
 
-                t.Execute().ShouldBeTrue();
+                Assert.True(t.Execute());
 
                 engine.AssertLogDoesntContain("MSB");
                 engine.AssertLogContains("Who made you king anyways");
-                t.ExitCode.ShouldBe(0);
-                engine.Errors.ShouldBe(0);
+                Assert.Equal(0, t.ExitCode);
+                Assert.Equal(0, engine.Errors);
             }
         }
 
@@ -349,12 +348,12 @@ namespace Microsoft.Build.UnitTests
                                                 ? "/C Echo 'Who made you king anyways' 1>&2"
                                                 : @"-c """"""echo 'Who made you king anyways' 1>&2""""""";
 
-                t.Execute().ShouldBeFalse();
+                Assert.False(t.Execute());
 
                 engine.AssertLogDoesntContain("MSB3073");
                 engine.AssertLogContains("Who made you king anyways");
-                t.ExitCode.ShouldBe(-1);
-                engine.Errors.ShouldBe(1);
+                Assert.Equal(-1, t.ExitCode);
+                Assert.Equal(1, engine.Errors);
             }
         }
 
@@ -371,9 +370,9 @@ namespace Microsoft.Build.UnitTests
                 t.BuildEngine = engine;
                 t.FullToolName = NativeMethodsShared.IsWindows ? "c:\\baz\\foo.exe" : "/baz/foo.exe";
 
-                t.ToolExe.ShouldBe("foo.exe");
+                Assert.Equal("foo.exe", t.ToolExe);
                 t.ToolExe = "bar.exe";
-                t.ToolExe.ShouldBe("bar.exe");
+                Assert.Equal("bar.exe", t.ToolExe);
             }
         }
 
@@ -400,13 +399,13 @@ namespace Microsoft.Build.UnitTests
                 t.ToolPath = systemPath;
 
                 t.Execute();
-                t.PathToToolUsed.ShouldBe(Path.Combine(systemPath, shellName));
+                Assert.Equal(Path.Combine(systemPath, shellName), t.PathToToolUsed);
                 engine.AssertLogContains(shellName);
                 engine.Log = String.Empty;
 
                 t.ToolExe = copyName;
                 t.Execute();
-                t.PathToToolUsed.ShouldBe(Path.Combine(systemPath, copyName));
+                Assert.Equal(Path.Combine(systemPath, copyName), t.PathToToolUsed);
                 engine.AssertLogContains(copyName);
                 engine.AssertLogDoesntContain(shellName);
             }
@@ -424,9 +423,9 @@ namespace Microsoft.Build.UnitTests
                 t.BuildEngine = engine;
                 t.FullToolName = "doesnotexist.exe";
 
-                t.Execute().ShouldBeFalse();
-                t.ExitCode.ShouldBe(-1);
-                engine.Errors.ShouldBe(1);
+                Assert.False(t.Execute());
+                Assert.Equal(-1, t.ExitCode);
+                Assert.Equal(1, engine.Errors);
 
                 // Does not throw an exception
             }
@@ -446,9 +445,9 @@ namespace Microsoft.Build.UnitTests
                 string toolName = NativeMethodsShared.IsWindows ? "cmd.exe" : "sh";
                 t.FullToolName = toolName;
 
-                t.Execute().ShouldBeTrue();
-                t.ExitCode.ShouldBe(0);
-                engine.Errors.ShouldBe(0);
+                Assert.True(t.Execute());
+                Assert.Equal(0, t.ExitCode);
+                Assert.Equal(0, engine.Errors);
 
                 engine.AssertLogContains(
 #if FEATURE_SPECIAL_FOLDERS
@@ -478,9 +477,9 @@ namespace Microsoft.Build.UnitTests
                 t.MockCommandLineCommands = "\"hello\" \"" + tempFile + "\"";
                 t.StandardOutputImportance = "Low";
 
-                t.Execute().ShouldBeTrue();
-                t.ExitCode.ShouldBe(0);
-                engine.Errors.ShouldBe(0);
+                Assert.True(t.Execute());
+                Assert.Equal(0, t.ExitCode);
+                Assert.Equal(0, engine.Errors);
 
                 engine.AssertLogDoesntContain("hello world");
             }
@@ -506,9 +505,9 @@ namespace Microsoft.Build.UnitTests
                 t.MockCommandLineCommands = "\"hello\" \"" + tempFile + "\"";
                 t.StandardOutputImportance = "High";
 
-                t.Execute().ShouldBeTrue();
-                t.ExitCode.ShouldBe(0);
-                engine.Errors.ShouldBe(0);
+                Assert.True(t.Execute());
+                Assert.Equal(0, t.ExitCode);
+                Assert.Equal(0, engine.Errors);
 
                 engine.AssertLogContains("hello world");
             }
@@ -537,8 +536,8 @@ namespace Microsoft.Build.UnitTests
                 // The command we're giving is the command to spew the contents of the temp
                 // file we created above.
                 t.MockCommandLineCommands = NativeMethodsShared.IsWindows
-                                                ? $"/C type \"{tempFile}\""
-                                                : $"-c \"cat \'{tempFile}\'\"";
+                                                ? ("/C type \"" + tempFile + "\"")
+                                                : (@"-c """"""cat '" + tempFile + @"'""""""");
 
                 t.Execute();
 
@@ -548,8 +547,8 @@ namespace Microsoft.Build.UnitTests
                 engine.AssertLogContains("BADTHINGHAPPENED");
                 engine.AssertLogContains("This is my custom error format");
 
-                engine.Warnings.ShouldBe(1); // "Expected one warning in log."
-                engine.Errors.ShouldBe(1); // "Expected one error in log."
+                Assert.Equal(1, engine.Warnings); // "Expected one warning in log."
+                Assert.Equal(1, engine.Errors); // "Expected one error in log."
             }
 
             File.Delete(tempFile);
@@ -568,21 +567,21 @@ namespace Microsoft.Build.UnitTests
             task.EnvironmentVariables = new string[] { "a=b", "c=d", userVarName + "=x" /* built-in */, "path=" /* blank value */};
             bool result = task.Execute();
 
-            result.ShouldBe(true);
-            task.ExecuteCalled.ShouldBe(true);
+            Assert.Equal(true, result);
+            Assert.Equal(true, task.ExecuteCalled);
 
             ProcessStartInfo startInfo = task.StartInfo;
 
 #if FEATURE_PROCESSSTARTINFO_ENVIRONMENT
-            startInfo.Environment["a"].ShouldBe("b");
-            startInfo.Environment["c"].ShouldBe("d");
-            startInfo.Environment[userVarName].ShouldBe("x");
-            startInfo.Environment["path"].ShouldBe(String.Empty);
+            Assert.Equal("b", startInfo.Environment["a"]);
+            Assert.Equal("d", startInfo.Environment["c"]);
+            Assert.Equal("x", startInfo.Environment[userVarName]);
+            Assert.Equal(String.Empty, startInfo.Environment["path"]);
 #else
-            startInfo.EnvironmentVariables["a"].ShouldBe("b");
-            startInfo.EnvironmentVariables["c"].ShouldBe("d");
-            startInfo.EnvironmentVariables[userVarName].ShouldBe("x");
-            startInfo.EnvironmentVariables["path"].ShouldBe(String.Empty);
+            Assert.Equal("b", startInfo.EnvironmentVariables["a"]);
+            Assert.Equal("d", startInfo.EnvironmentVariables["c"]);
+            Assert.Equal("x", startInfo.EnvironmentVariables[userVarName]);
+            Assert.Equal(String.Empty, startInfo.EnvironmentVariables["path"]);
 #endif
 
             if (NativeMethodsShared.IsWindows)
@@ -614,11 +613,11 @@ namespace Microsoft.Build.UnitTests
             task.EnvironmentVariables = new string[] { "a=b=c" };
             bool result = task.Execute();
 
-            result.ShouldBe(true);
+            Assert.Equal(true, result);
 #if FEATURE_PROCESSSTARTINFO_ENVIRONMENT
-            task.StartInfo.Environment["a"].ShouldBe("b=c");
+            Assert.Equal("b=c", task.StartInfo.Environment["a"]);
 #else
-            task.StartInfo.EnvironmentVariables["a"].ShouldBe("b=c");
+            Assert.Equal("b=c", task.StartInfo.EnvironmentVariables["a"]);
 #endif
         }
 
@@ -633,8 +632,8 @@ namespace Microsoft.Build.UnitTests
             task.EnvironmentVariables = new string[] { "x" };
             bool result = task.Execute();
 
-            result.ShouldBe(false);
-            task.ExecuteCalled.ShouldBe(false);
+            Assert.Equal(false, result);
+            Assert.Equal(false, task.ExecuteCalled);
         }
 
         /// <summary>
@@ -648,8 +647,8 @@ namespace Microsoft.Build.UnitTests
             task.EnvironmentVariables = new string[] { "" };
             bool result = task.Execute();
 
-            result.ShouldBe(false);
-            task.ExecuteCalled.ShouldBe(false);
+            Assert.Equal(false, result);
+            Assert.Equal(false, task.ExecuteCalled);
         }
 
         /// <summary>
@@ -663,8 +662,8 @@ namespace Microsoft.Build.UnitTests
             task.EnvironmentVariables = new string[] { "=a;b=c" };
             bool result = task.Execute();
 
-            result.ShouldBe(false);
-            task.ExecuteCalled.ShouldBe(false);
+            Assert.Equal(false, result);
+            Assert.Equal(false, task.ExecuteCalled);
         }
 
         /// <summary>
@@ -679,8 +678,8 @@ namespace Microsoft.Build.UnitTests
             task.EnvironmentVariables = null;
             bool result = task.Execute();
 
-            result.ShouldBe(true);
-            task.ExecuteCalled.ShouldBe(true);
+            Assert.Equal(true, result);
+            Assert.Equal(true, task.ExecuteCalled);
             Assert.Equal(
                 true,
 #if FEATURE_PROCESSSTARTINFO_ENVIRONMENT
@@ -720,7 +719,7 @@ namespace Microsoft.Build.UnitTests
 
                     Assert.NotEqual(directoryNamedSameAsTool, task.PathToToolUsed);
 
-                    result.ShouldBeTrue();
+                    Assert.True(result);
                 }
             }
             finally
@@ -754,7 +753,7 @@ namespace Microsoft.Build.UnitTests
 
             string cmdPath = ToolTask.FindOnPath(shellName);
 
-            cmdPath.ShouldBe(expectedCmdPath, StringCompareShould.IgnoreCase);
+            Assert.Equal(expectedCmdPath, cmdPath, StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -774,11 +773,11 @@ namespace Microsoft.Build.UnitTests
             task.EnvironmentVariables = new string[] { "a=b" };
             bool result = task.Execute();
 
-            result.ShouldBe(true);
+            Assert.Equal(true, result);
 #if FEATURE_PROCESSSTARTINFO_ENVIRONMENT
-            task.StartInfo.Environment.ContainsKey("a").ShouldBe(false);
+            Assert.Equal(false, task.StartInfo.Environment.ContainsKey("a"));
 #else
-            task.StartInfo.EnvironmentVariables.ContainsKey("a").ShouldBe(false);
+            Assert.Equal(false, task.StartInfo.EnvironmentVariables.ContainsKey("a"));
 #endif
         }
 
@@ -793,7 +792,7 @@ namespace Microsoft.Build.UnitTests
                                             : "-c echo \"hello \\\"world\\\"\"";
             t.Execute();
             engine.AssertLogContains("echo \"hello \\\"world\\\"\"");
-            engine.Errors.ShouldBe(0);
+            Assert.Equal(0, engine.Errors);
         }
     }
 }
