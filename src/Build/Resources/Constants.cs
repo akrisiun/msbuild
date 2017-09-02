@@ -39,6 +39,7 @@ namespace Microsoft.Build.Internal
         internal const string extensionsPath64 = "MSBuildExtensionsPath64";
         internal const string userExtensionsPath = "MSBuildUserExtensionsPath";
         internal const string toolsPath = MSBuildConstants.ToolsPath;
+
         internal const string toolsVersion = "MSBuildToolsVersion";
         internal const string msbuildRuntimeType = "MSBuildRuntimeType";
         internal const string overrideTasksPath = "MSBuildOverrideTasksPath";

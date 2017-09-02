@@ -1886,11 +1886,11 @@ namespace Microsoft.Build.Execution
         /// </summary>
         internal static ProjectInstance[] LoadSolutionForBuild(string projectFile, PropertyDictionary<ProjectPropertyInstance> globalPropertiesInstances, string toolsVersion, BuildParameters buildParameters, ILoggingService loggingService, BuildEventContext projectBuildEventContext, bool isExplicitlyLoaded, IReadOnlyCollection<string> targetNames)
         {
-            ErrorUtilities.VerifyThrowArgumentLength(projectFile, "projectFile");
-            ErrorUtilities.VerifyThrowArgumentNull(globalPropertiesInstances, "globalPropertiesInstances");
-            ErrorUtilities.VerifyThrowArgumentLengthIfNotNull(toolsVersion, "toolsVersion");
-            ErrorUtilities.VerifyThrowArgumentNull(buildParameters, "buildParameters");
-            ErrorUtilities.VerifyThrow(FileUtilities.IsSolutionFilename(projectFile), "Project file {0} is not a solution.", projectFile);
+            //ErrorUtilities.VerifyThrowArgumentLength(projectFile, "projectFile");
+            //ErrorUtilities.VerifyThrowArgumentNull(globalPropertiesInstances, "globalPropertiesInstances");
+            //ErrorUtilities.VerifyThrowArgumentLengthIfNotNull(toolsVersion, "toolsVersion");
+            //ErrorUtilities.VerifyThrowArgumentNull(buildParameters, "buildParameters");
+            //ErrorUtilities.VerifyThrow(FileUtilities.IsSolutionFilename(projectFile), "Project file {0} is not a solution.", projectFile);
 
             ProjectInstance[] projectInstances = null;
 
