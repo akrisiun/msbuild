@@ -14,7 +14,10 @@
     <GenAPITargetPath Condition="'$(GenAPITargetPath)' == ''">$(GenAPITargetDir)$(TargetName).cs</GenAPITargetPath>
   </PropertyGroup>
 
-  <Import Project="$(GenApiDir)build\Microsoft.DotNet.BuildTools.GenAPI.targets" Condition="'$(GenerateReferenceAssemblySources)' == 'true'" />
+  <!-- 
+  <Import Project="$(GenApiDir)build\Microsoft.DotNet.BuildTools.GenAPI.targets" 
+   Condition="'$(GenerateReferenceAssemblySources)' == 'true'" />
+  -->
 
   <Target Name="CreateReferenceAssemblyDirectory"
           BeforeTargets="GenerateReferenceAssemblySource"

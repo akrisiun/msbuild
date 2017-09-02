@@ -110,7 +110,8 @@
   <Target Name="DeployRuntime"
           DependsOnTargets="RestoreRuntimePackages"
           Outputs="%(RuntimeProjectJson.LockFile).IntentionallyDoesNotExistSoThisAlwaysRuns">
-    <PrereleaseResolveNuGetPackageAssets AllowFallbackOnTargetSelection="true"
+<!--
+          <PrereleaseResolveNuGetPackageAssets AllowFallbackOnTargetSelection="true"
                                          IncludeFrameworkReferences="false"
                                          NuGetPackagesDirectory="$(PackagesDir)"
                                          RuntimeIdentifier="$(NuGetRuntimeIdentifier)"
@@ -119,6 +120,7 @@
                                          TargetMonikers="$(NuGetTargetMoniker)">
       <Output TaskParameter="ResolvedCopyLocalItems" ItemName="ResolvedRuntimeFiles" />
     </PrereleaseResolveNuGetPackageAssets>
+-->      
 
     <!-- Copy the dependencies to both the deployment and the test directories -->
     <Copy SourceFiles="@(ResolvedRuntimeFiles)"
