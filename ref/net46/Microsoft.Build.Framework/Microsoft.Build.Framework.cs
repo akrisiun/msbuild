@@ -178,8 +178,8 @@ namespace Microsoft.Build.Framework
     public partial interface IBuildEngine3 : Microsoft.Build.Framework.IBuildEngine, Microsoft.Build.Framework.IBuildEngine2
     {
         Microsoft.Build.Framework.BuildEngineResult BuildProjectFilesInParallel(string[] projectFileNames, string[] targetNames, System.Collections.IDictionary[] globalProperties, System.Collections.Generic.IList<string>[] removeGlobalProperties, string[] toolsVersion, bool returnTargetOutputs);
-        void Reacquire();
         void Yield();
+        void Reacquire();
     }
     public partial interface IBuildEngine4 : Microsoft.Build.Framework.IBuildEngine, Microsoft.Build.Framework.IBuildEngine2, Microsoft.Build.Framework.IBuildEngine3
     {
@@ -739,9 +739,9 @@ namespace Microsoft.Build.Framework.XamlTypes
         public string ToolName { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
         public void BeginInit() { }
         public void EndInit() { }
+        public Microsoft.Build.Framework.XamlTypes.BaseProperty GetProperty(string propertyName) { throw null; }
         public System.Collections.Specialized.OrderedDictionary GetPropertiesByCategory() { throw null; }
         public System.Collections.Generic.IList<Microsoft.Build.Framework.XamlTypes.BaseProperty> GetPropertiesInCategory(string categoryName) { throw null; }
-        public Microsoft.Build.Framework.XamlTypes.BaseProperty GetProperty(string propertyName) { throw null; }
         public System.Collections.Generic.IEnumerable<object> GetSchemaObjects(System.Type type) { throw null; }
         public System.Collections.Generic.IEnumerable<System.Type> GetSchemaObjectTypes() { throw null; }
     }

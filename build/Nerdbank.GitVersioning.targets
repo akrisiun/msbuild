@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <VersionSourceFile>$(IntermediateOutputPath)\$(AssemblyName).Version$(DefaultLanguageSourceExtension)</VersionSourceFile>
+
+    <PrepareResourcesDependsOn>
+      GenerateAssemblyVersionInfo;
+      $(PrepareResourcesDependsOn)
+    </PrepareResourcesDependsOn>
+
+    <CoreCompileDependsOn>
+      GenerateAssemblyVersionInfo;
+      $(CoreCompileDependsOn)
+    </CoreCompileDependsOn>
+
+    <VersionDependsOn>
+      GetNuPkgVersion;
+      $(VersionDependsOn)
+    </VersionDependsOn>
+
+    <GenerateNuspecDependsOn>
+      GetBuildVersion;
+      $(GenerateNuspecDependsOn)
+    </GenerateNuspecDependsOn>
+
+    <!-- Suppress assembly version info generation if not obviously compiling an assembly. -->
+    <GenerateAssemblyVersionInfo Condition=" '$(GenerateAssemblyVersionInfo)' == '' and '$(TargetExt)' != '.dll' and '$(TargetExt)' != '.exe'">false</GenerateAssemblyVersionInfo>
+
+    <!-- Suppress version attribute generation in Microsoft.NET.Sdk projects to avoid build failures
+         when two sets of attributes are emitted. -->
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+
+    <_NBGV_PlatformSuffix Condition=" '$(_NBGV_PlatformSuffix)' == '' and '$(MSBuildRuntimeType)' == 'Core' ">MSBuildCore/</_NBGV_PlatformSuffix>
+    <_NBGV_PlatformSuffix Condition=" '$(_NBGV_PlatformSuffix)' == '' ">MSBuildFull/</_NBGV_PlatformSuffix>
+    <NerdbankGitVersioningTasksPath Condition=" '$(NerdbankGitVersioningTasksPath)' == '' ">$(MSBuildThisFileDirectory)$(_NBGV_PlatformSuffix)</NerdbankGitVersioningTasksPath>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="$(NerdbankGitVersioningTasksPath)Nerdbank.GitVersioning.Tasks.dll" TaskName="Nerdbank.GitVersioning.Tasks.AssemblyVersionInfo"/>
+  <UsingTask AssemblyFile="$(NerdbankGitVersioningTasksPath)Nerdbank.GitVersioning.Tasks.dll" TaskName="Nerdbank.GitVersioning.Tasks.SetCloudBuildVariables"/>
+  <UsingTask AssemblyFile="$(NerdbankGitVersioningTasksPath)Nerdbank.GitVersioning.Tasks.dll" TaskName="Nerdbank.GitVersioning.Tasks.GetBuildVersion"/>
+  <UsingTask AssemblyFile="$(NerdbankGitVersioningTasksPath)Nerdbank.GitVersioning.Tasks.dll" TaskName="Nerdbank.GitVersioning.Tasks.CompareFiles"/>
+
+  <PropertyGroup>
+    <!-- Consider building a tag to be more precise than the branch we're building. -->
+    <_NBGV_BuildingRef>$(_NBGV_BuildingTag)</_NBGV_BuildingRef>
+    <_NBGV_BuildingRef Condition=" '$(_NBGV_BuildingRef)' == '' ">$(_NBGV_BuildingBranch)</_NBGV_BuildingRef>
+  </PropertyGroup>
+
+  <Target Name="GetBuildVersion" Returns="$(BuildVersion)">
+    <Nerdbank.GitVersioning.Tasks.GetBuildVersion
+      BuildingRef="$(_NBGV_BuildingRef)"
+      BuildMetadata="@(BuildMetadata)"
+      DefaultPublicRelease="$(PublicRelease)"
+      GitRepoRoot="$(GitRepoRoot)"
+      TargetsPath="$(MSBuildThisFileDirectory)">
+
+      <Output TaskParameter="Version" PropertyName="BuildVersion" />
+      <Output TaskParameter="AssemblyInformationalVersion" PropertyName="AssemblyInformationalVersion" />
+      <Output TaskParameter="AssemblyFileVersion" PropertyName="AssemblyFileVersion" />
+      <Output TaskParameter="AssemblyFileVersion" PropertyName="FileVersion" />
+      <Output TaskParameter="SimpleVersion" PropertyName="BuildVersionSimple" />
+      <Output TaskParameter="PrereleaseVersion" PropertyName="PrereleaseVersion" />
+      <Output TaskParameter="MajorMinorVersion" PropertyName="MajorMinorVersion" />
+      <Output TaskParameter="AssemblyVersion" PropertyName="AssemblyVersion" />
+      <Output TaskParameter="GitCommitId" PropertyName="GitCommitId" />
+      <Output TaskParameter="GitCommitIdShort" PropertyName="GitCommitIdShort" />
+      <Output TaskParameter="GitVersionHeight" PropertyName="GitVersionHeight" />
+      <Output TaskParameter="BuildNumber" PropertyName="BuildNumber" />
+      <Output TaskParameter="BuildNumber" PropertyName="BuildVersionNumberComponent" />
+      <Output TaskParameter="PublicRelease" PropertyName="PublicRelease" />
+      <Output TaskParameter="CloudBuildNumber" PropertyName="CloudBuildNumber" Condition=" '$(CloudBuildNumber)' == '' "/>
+      <Output TaskParameter="BuildMetadataFragment" PropertyName="SemVerBuildSuffix" />
+      <Output TaskParameter="NuGetPackageVersion" PropertyName="NuGetPackageVersion" />
+      <Output TaskParameter="NuGetPackageVersion" PropertyName="Version" />
+      <Output TaskParameter="NuGetPackageVersion" PropertyName="PackageVersion" />
+      <Output TaskParameter="NPMPackageVersion" PropertyName="NPMPackageVersion" />
+      <Output TaskParameter="CloudBuildVersionVars" ItemName="CloudBuildVersionVars" />
+    </Nerdbank.GitVersioning.Tasks.GetBuildVersion>
+
+    <PropertyGroup>
+      <BuildVersion3Components>$(MajorMinorVersion).$(BuildVersionNumberComponent)</BuildVersion3Components>
+    </PropertyGroup>
+
+    <Warning Condition=" '$(AssemblyInformationalVersion)' == '' " Text="Unable to determine the git HEAD commit ID to use for informational version number." />
+    <Message Condition=" '$(AssemblyInformationalVersion)' != '' " Text="Building version $(BuildVersion) from commit $(GitCommitId)"/>
+    <Message Condition=" '$(AssemblyInformationalVersion)' == '' " Text="Building version $(BuildVersion)"/>
+    <Message Importance="low" Text="AssemblyInformationalVersion: $(AssemblyInformationalVersion)" />
+    <Message Importance="low" Text="NuGetPackageVersion: $(NuGetPackageVersion)" />
+  </Target>
+
+  <Target Name="SetCloudBuildVersionVars"
+        DependsOnTargets="GetBuildVersion"
+        AfterTargets="GetBuildVersion"
+        Condition=" '@(CloudBuildVersionVars)' != '' ">
+    <Nerdbank.GitVersioning.Tasks.SetCloudBuildVariables
+      CloudBuildVersionVars="@(CloudBuildVersionVars)">
+      <Output TaskParameter="MSBuildPropertyUpdates" ItemName="_MSBuildPropertyUpdates_Vars" />
+    </Nerdbank.GitVersioning.Tasks.SetCloudBuildVariables>
+    <CreateProperty Value="%(_MSBuildPropertyUpdates_Vars.Value)" Condition=" '@(_MSBuildPropertyUpdates_Vars)' != '' ">
+      <Output TaskParameter="Value" PropertyName="%(_MSBuildPropertyUpdates_Vars.Identity)" />
+    </CreateProperty>
+  </Target>
+
+  <Target Name="SetCloudBuildNumberWithVersion"
+        DependsOnTargets="GetBuildVersion"
+        AfterTargets="GetBuildVersion"
+        Condition=" '$(CloudBuildNumber)' != '' ">
+    <Nerdbank.GitVersioning.Tasks.SetCloudBuildVariables
+      CloudBuildNumber="$(CloudBuildNumber)">
+      <Output TaskParameter="MSBuildPropertyUpdates" ItemName="_MSBuildPropertyUpdates_BuildNumber" />
+    </Nerdbank.GitVersioning.Tasks.SetCloudBuildVariables>
+    <CreateProperty Value="%(_MSBuildPropertyUpdates_BuildNumber.Value)" Condition=" '@(_MSBuildPropertyUpdates_BuildNumber)' != '' ">
+      <Output TaskParameter="Value" PropertyName="%(_MSBuildPropertyUpdates_BuildNumber.Identity)" />
+    </CreateProperty>
+  </Target>
+
+  <Target Name="GetNuGetPackageVersion" DependsOnTargets="GetBuildVersion" Returns="$(NuGetPackageVersion)" />
+
+  <Target Name="GenerateAssemblyVersionInfo" DependsOnTargets="GetBuildVersion" Condition=" '$(GenerateAssemblyVersionInfo)' != 'false' ">
+    <PropertyGroup>
+      <NewVersionSourceFile>$(VersionSourceFile).new</NewVersionSourceFile>
+      <UltimateResourceFallbackLocation Condition=" '$(DevDivProjectSubType)' != 'portable' ">UltimateResourceFallbackLocation.MainAssembly</UltimateResourceFallbackLocation>
+    </PropertyGroup>
+    <MakeDir Directories="$(IntermediatePath)"/>
+    <Nerdbank.GitVersioning.Tasks.AssemblyVersionInfo
+                  OutputFile="$(NewVersionSourceFile)"
+                  CodeLanguage="$(Language)"
+                  AssemblyVersion="$(AssemblyVersion)"
+                  AssemblyFileVersion="$(AssemblyFileVersion)"
+                  AssemblyInformationalVersion="$(AssemblyInformationalVersion)"
+                  AssemblyName="$(AssemblyName)"
+                  RootNamespace="$(RootNamespace)"
+                  AssemblyOriginatorKeyFile="$(AssemblyOriginatorKeyFile)"
+                  AssemblyTitle="$(AssemblyTitle)"
+                  AssemblyProduct="$(AssemblyProduct)"
+                  AssemblyCopyright="$(AssemblyCopyright)"
+                  AssemblyCompany="$(AssemblyCompany)"
+                  AssemblyConfiguration="$(Configuration)"
+                  EmitNonVersionCustomAttributes="$(NBGV_EmitNonVersionCustomAttributes)"
+                  />
+    <!-- Avoid applying the newly generated AssemblyVersionInfo.cs file to the build
+         unless it has changed in order to allow for incremental building. -->
+    <Nerdbank.GitVersioning.Tasks.CompareFiles OriginalItems="$(VersionSourceFile)" NewItems="$(NewVersionSourceFile)">
+      <Output TaskParameter="AreChanged" PropertyName="AssemblyVersionInfoChanged" />
+    </Nerdbank.GitVersioning.Tasks.CompareFiles>
+    <Copy Condition=" '$(AssemblyVersionInfoChanged)' == 'true' " SourceFiles="$(NewVersionSourceFile)" DestinationFiles="$(VersionSourceFile)" />
+    <ItemGroup>
+      <Compile Include="$(VersionSourceFile)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Support for pattern found in users of Tvl.NuGet.BuildTasks. -->
+  <Target Name="SupplyNuGetManifestVersion"
+          DependsOnTargets="GetBuildVersion"
+          BeforeTargets="EnsureNuGetManifestMetadata">
+    <ItemGroup>
+      <NuGetManifest>
+        <Version>$(NuGetPackageVersion)</Version>
+      </NuGetManifest>
+    </ItemGroup>
+  </Target>
+
+  <!-- Support for NuProj projects. -->
+  <Target Name="GetNuPkgVersion"
+          Condition=" '$(MSBuildProjectExtension)' == '.nuproj' "
+          DependsOnTargets="GetBuildVersion"
+          Returns="$(NuGetPackageVersion)">
+    <PropertyGroup>
+      <Version>$(NuGetPackageVersion)</Version>
+      <NuSpecProperties>$(NuSpecProperties);$(NuGetProperties);GitCommitIdShort=$(GitCommitIdShort)</NuSpecProperties>
+    </PropertyGroup>
+  </Target>
+
+  <!-- Workaround till https://github.com/NuGet/NuGet.Client/issues/1064 is merged and used. -->
+  <Target Name="_NBGV_CalculateNuSpecVersionHelper"
+          BeforeTargets="GenerateNuspec"
+          DependsOnTargets="GetBuildVersion" />
+</Project>

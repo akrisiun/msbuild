@@ -70,7 +70,6 @@ artifacts/
 *.binlog
 *.vspscc
 *.vssscc
-.builds
 *.pidb
 *.svclog
 *.scc
@@ -136,9 +135,6 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
-# Click-Once directory
-publish/
-
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
@@ -202,7 +198,6 @@ UpgradeLog*.htm
 *.bim_*.settings
 
 # Microsoft Fakes
-FakesAssemblies/
 
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
@@ -225,8 +220,8 @@ _Pvt_Extensions
 ApiPort/
 *.xlsx
 Differences.txt
-Tools/
 Samples/MultiprocessBuild/PortableTask.dll
 
-# Visual Studio Code
-.vscode/
+Tools/analyzers/
+Tools/dotnetcli/sdk/1.0.0-preview3-003686/
+Tools/dotnetcli/shared/
