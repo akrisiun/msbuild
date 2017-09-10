@@ -2611,14 +2611,26 @@ namespace Microsoft.Build.Evaluation
             // that we know we don't have to reevaluate. One example is project conversion bulk addfiles and set attributes. 
             if (!SkipEvaluation && !_projectCollection.SkipEvaluation && IsDirty)
             {
+                bool retry = false;
                 try
                 {
                     Reevaluate(loggingServiceForEvaluation, loadSettings);
                 }
                 catch (InvalidProjectFileException ex)
                 {
-                    loggingServiceForEvaluation.LogInvalidProjectFileError(s_buildEventContext, ex);
-                    throw;
+                    retry = true;
+                }
+                if (retry)
+                {
+                    try
+                    {
+                        Reevaluate(loggingServiceForEvaluation, loadSettings);
+                    }
+                    catch (InvalidProjectFileException ex)
+                    {
+                        loggingServiceForEvaluation.LogInvalidProjectFileError(s_buildEventContext, ex);
+                        throw;
+                    }
                 }
             }
         }
@@ -3336,7 +3348,18 @@ namespace Microsoft.Build.Evaluation
 
                 if (Toolset == null)
                 {
-                    string toolsVersionList = Microsoft.Build.Internal.Utilities.CreateToolsVersionListString(Project.ProjectCollection.Toolsets);
+                    var ts15 = System.Linq.Enumerable.Where(
+                        Project.ProjectCollection.Toolsets, (x) => x.ToolsVersion.Equals("15.0")).FirstOrDefault();
+
+                    var sets = Project.ProjectCollection.Toolsets;
+                    if (ts15 == null)
+                    {
+                        Project.ProjectCollection.Sets.Add("15.0", new Toolset("15.0",
+                            @"C:\Program Files(x86)\MSBuild\14.0\bin", null, projectCollection: Project.ProjectCollection, msbuildOverrideTasksPath: null));
+                        sets = Project.ProjectCollection.Toolsets;
+                    }
+
+                    string toolsVersionList = Microsoft.Build.Internal.Utilities.CreateToolsVersionListString(sets);
                     ProjectErrorUtilities.ThrowInvalidProject(toolsVersionLocation, "UnrecognizedToolsVersion", toolsVersionToUse, toolsVersionList);
                 }
 

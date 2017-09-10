@@ -657,6 +657,7 @@ namespace Microsoft.Build.Evaluation
         public System.Collections.Generic.ICollection<Microsoft.Build.Evaluation.Project> LoadedProjects { get { throw null; } }
         public System.Collections.Generic.ICollection<Microsoft.Build.Framework.ILogger> Loggers { [System.Diagnostics.DebuggerStepThroughAttribute]get { throw null; } }
         public bool OnlyLogCriticalEvents { get { throw null; } set { } }
+        public System.Collections.Generic.Dictionary<string, Microsoft.Build.Evaluation.Toolset> Sets { get { throw null; } }
         public bool SkipEvaluation { get { throw null; } set { } }
         public Microsoft.Build.Evaluation.ToolsetDefinitionLocations ToolsetLocations { [System.Diagnostics.DebuggerStepThroughAttribute]get { throw null; } }
         public System.Collections.Generic.ICollection<Microsoft.Build.Evaluation.Toolset> Toolsets { get { throw null; } }
@@ -687,6 +688,7 @@ namespace Microsoft.Build.Evaluation
         public bool RemoveGlobalProperty(string name) { throw null; }
         public bool RemoveToolset(string toolsVersion) { throw null; }
         public void SetGlobalProperty(string name, string value) { }
+        public void SetSets(System.Collections.Generic.Dictionary<string, Microsoft.Build.Evaluation.Toolset> sets) { }
         public bool TryUnloadProject(Microsoft.Build.Construction.ProjectRootElement projectRootElement) { throw null; }
         public static string Unescape(string escapedString) { throw null; }
         public void UnloadAllProjects() { }

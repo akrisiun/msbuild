@@ -591,6 +591,13 @@ namespace Microsoft.Build.Evaluation
             }
         }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        public Dictionary<string, Toolset> Sets => _toolsets;
+        public void SetSets(Dictionary<string, Toolset> sets)
+        {
+            _toolsets = sets;
+        }
+
         /// <summary>
         /// Returns the locations used to find the toolsets.
         /// </summary>

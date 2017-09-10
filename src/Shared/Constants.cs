@@ -73,7 +73,7 @@ namespace Microsoft.Build.Shared
         /// The most current VSGeneralAssemblyVersion known to this version of MSBuild.
         /// </summary>
 #if STANDALONEBUILD
-        internal const string CurrentAssemblyVersion = "15.1.0.0";
+        internal const string CurrentAssemblyVersion = "15.5.0.0";
 #else
         internal const string CurrentAssemblyVersion = Microsoft.VisualStudio.Internal.BrandNames.VSGeneralAssemblyVersion;
 #endif
