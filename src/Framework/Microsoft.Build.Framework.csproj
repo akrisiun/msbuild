@@ -21,6 +21,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-MONO|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-MONO|AnyCPU'" />
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>MSFT.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Shared\Constants.cs">
       <Link>Constants.cs</Link>
@@ -156,7 +162,7 @@
     </Compile>
     <Compile Include="TelemetryEventArgs.cs" />
     <None Include="Event args classes.cd" />
-    <None Include="project.json" />
+    <None Include="MSFT.snk" />
     <!-- Win32 RC Files -->
     <RCResourceFile Include="native.rc" />
   </ItemGroup>

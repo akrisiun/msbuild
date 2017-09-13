@@ -10,12 +10,16 @@
     <RootNamespace>Microsoft.Build.Utilities</RootNamespace>
     <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <EnableDocumentationFile>true</EnableDocumentationFile>
+    <EnableDocumentationFile>false</EnableDocumentationFile>
     <GenerateReferenceAssemblySources>true</GenerateReferenceAssemblySources>
     <UpdateNuGetPackageDependencies>true</UpdateNuGetPackageDependencies>
+    <NetCoreBuild>false</NetCoreBuild>
+    <IsRestoreRequired>false</IsRestoreRequired>
   </PropertyGroup>
   <!-- Default configurations to help VS understand the configurations -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\bin\</OutputPath>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" />
@@ -265,13 +269,12 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Framework\Microsoft.Build.Framework.csproj">
-      <Project>{571F09DB-A81A-4444-945C-6F7B530054CD}</Project>
-      <Name>Microsoft.Build.Framework</Name>
-    </ProjectReference>
+    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="project.json" />
+    <Reference Include="Microsoft.Build.Framework">
+      <HintPath>..\..\bin\net46\Microsoft.Build.Framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="..\dir.targets" />
 </Project>

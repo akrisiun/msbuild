@@ -85,30 +85,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <RuntimeProjectJson Include="$(MSBuildThisFileDirectory)runtimeDependencies\project.json">
-      <LockFile>$(MSBuildThisFileDirectory)runtimeDependencies\project.lock.json</LockFile>
-      <DestinationFolder>$(DeploymentDir)</DestinationFolder>
-      <TestDeploymentDir>$(TestDeploymentDir)</TestDeploymentDir>
-    </RuntimeProjectJson>
-    <RuntimeProjectJson Include="$(MSBuildThisFileDirectory)roslyn\project.json">
-      <LockFile>$(MSBuildThisFileDirectory)roslyn\project.lock.json</LockFile>
-      <DestinationFolder>$(DeploymentDir)\Roslyn</DestinationFolder>
-      <TestDeploymentDir>$(TestDeploymentDir)\Roslyn</TestDeploymentDir>
-    </RuntimeProjectJson>
+   
   </ItemGroup>
 
   <Target Name="RestoreRuntimePackages"
           Inputs="$(DnuToolPath);@(RuntimeProjectJson)"
           Outputs="@(RuntimeProjectJson->'%(LockFile)')">
-    <Exec Command="$(DnuRestoreCommand) &quot;%(RuntimeProjectJson.FullPath)&quot;" StandardOutputImportance="Low" />
-
+ 
     <!-- It appears that NuGet doesn't re-write the project.lock.json file if the contents would be the same. This can mess up incremental builds
         if you make a non-significant change to project.json.  To avoid that, update the timestamp of the lock file here. -->
-    <Touch Files="@(RuntimeProjectJson->'%(LockFile)')" />
+   
   </Target>
 
-  <Target Name="DeployRuntime"
-          DependsOnTargets="RestoreRuntimePackages"
+  <Target Name="DeployRuntime1"
           Outputs="%(RuntimeProjectJson.LockFile).IntentionallyDoesNotExistSoThisAlwaysRuns">
     <PrereleaseResolveNuGetPackageAssets AllowFallbackOnTargetSelection="true"
                                          IncludeFrameworkReferences="false"
@@ -201,18 +190,18 @@
     <!-- Csc task looks for dotnet.exe even on non-Windows-->
      <Copy
         SourceFiles="$(DeploymentDir)\dotnet"
-        DestinationFiles="$(DeploymentDir)\dotnet.exe"
+        DestinationFiles="dotnet.exe"
         Condition="'$(MonoBuild)' != 'true'"
         />
     <Copy
         SourceFiles="$(TestDeploymentDir)\dotnet"
-        DestinationFiles="$(TestDeploymentDir)\dotnet.exe"
+        DestinationFiles="dotnet.exe"
         Condition="'$(MonoBuild)' != 'true'"
         />        
         
   </Target>
 
   <Target Name="DeployDependencies"
-          DependsOnTargets="CopyBuildTools;CopyPackageContent;CopyCompilerTools;DeployRuntime;FixupFilenames" />
+          DependsOnTargets="CopyBuildTools;CopyPackageContent;CopyCompilerTools;FixupFilenames" />
 
 </Project>

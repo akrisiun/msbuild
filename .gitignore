@@ -225,3 +225,4 @@ Samples/MultiprocessBuild/PortableTask.dll
 Tools/analyzers/
 Tools/dotnetcli/sdk/1.0.0-preview3-003686/
 Tools/dotnetcli/shared/
+ref/

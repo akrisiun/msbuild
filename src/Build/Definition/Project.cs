@@ -2616,7 +2616,7 @@ namespace Microsoft.Build.Evaluation
                 {
                     Reevaluate(loggingServiceForEvaluation, loadSettings);
                 }
-                catch (InvalidProjectFileException ex)
+                catch (Exception ex) // InvalidProjectFileException ex)
                 {
                     retry = true;
                 }
@@ -2626,14 +2626,20 @@ namespace Microsoft.Build.Evaluation
                     {
                         Reevaluate(loggingServiceForEvaluation, loadSettings);
                     }
-                    catch (InvalidProjectFileException ex)
+                    catch (Exception ex) // InvalidProjectFileException ex)
                     {
-                        loggingServiceForEvaluation.LogInvalidProjectFileError(s_buildEventContext, ex);
-                        throw;
+                        if (ex is InvalidProjectFileException)
+                        loggingServiceForEvaluation.LogInvalidProjectFileError  (s_buildEventContext, ex as InvalidProjectFileException);
+
+                        LastError = ex.InnerException ?? ex;
+                        // throw; // $$$$$
                     }
                 }
             }
         }
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        public Exception LastError { get; set; }
 
         private void Reevaluate(ILoggingService loggingServiceForEvaluation, ProjectLoadSettings loadSettings)
         {

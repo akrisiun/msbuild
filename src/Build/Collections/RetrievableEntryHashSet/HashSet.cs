@@ -1727,6 +1727,7 @@ namespace Microsoft.Build.Collections
         // used for set checking operations (using enumerables) that rely on counting
         internal struct ElementCount
         {
+#pragma warning disable CS0649
             internal int uniqueCount;
             internal int unfoundCount;
         }
