@@ -3361,7 +3361,8 @@ namespace Microsoft.Build.Evaluation
                     if (ts15 == null)
                     {
                         Project.ProjectCollection.Sets.Add("15.0", new Toolset("15.0",
-                            @"C:\Program Files(x86)\MSBuild\14.0\bin", null, projectCollection: Project.ProjectCollection, msbuildOverrideTasksPath: null));
+                            @"C:\Program Files(x86)\MSBuild\15.0\bin",
+                            null, projectCollection: Project.ProjectCollection, msbuildOverrideTasksPath: null));
                         sets = Project.ProjectCollection.Toolsets;
                     }
 

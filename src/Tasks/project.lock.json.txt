@@ -1,0 +1,264 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.6": {
+      "Microsoft.VisualStudio.Setup.Configuration.Interop/1.11.2290": {
+        "type": "package",
+        "compile": {
+          "lib/net35/Microsoft.VisualStudio.Setup.Configuration.Interop.dll": {}
+        },
+        "runtime": {
+          "lib/net35/Microsoft.VisualStudio.Setup.Configuration.Interop.dll": {}
+        }
+      },
+      "PdbGit/3.0.41": {
+        "type": "package",
+        "build": {
+          "build/PdbGit.props": {},
+          "build/PdbGit.targets": {}
+        }
+      },
+      "SourceLink.Create.CommandLine/2.1.2": {
+        "type": "package",
+        "build": {
+          "build/SourceLink.Create.CommandLine.targets": {}
+        }
+      },
+      "System.Collections.Immutable/1.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll": {}
+        }
+      },
+      "System.Reflection.Metadata/1.3.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections.Immutable": "1.2.0"
+        },
+        "compile": {
+          "lib/portable-net45+win8/System.Reflection.Metadata.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8/System.Reflection.Metadata.dll": {}
+        }
+      },
+      "System.Runtime.InteropServices.RuntimeInformation/4.3.0": {
+        "type": "package",
+        "compile": {
+          "ref/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll": {
+            "assetType": "runtime",
+            "rid": "unix"
+          },
+          "runtimes/win/lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
+        }
+      },
+      "Microsoft.Build.Utilities/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6",
+        "dependencies": {
+          "Microsoft.VisualStudio.Setup.Configuration.Interop": "1.11.2290",
+          "PdbGit": "3.0.41",
+          "SourceLink.Create.CommandLine": "2.1.2",
+          "System.Runtime.InteropServices.RuntimeInformation": "4.3.0"
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Microsoft.VisualStudio.Setup.Configuration.Interop/1.11.2290": {
+      "sha512": "DrwCcOc7VBEGw6UIEMriTAPOt1Dg6op+m+S6fbjiHxlIfwG4QYDWXY3ff0PrEXo+3rvVqP3EkjrUnZ8SORaF7w==",
+      "type": "package",
+      "path": "microsoft.visualstudio.setup.configuration.interop/1.11.2290",
+      "files": [
+        "lib/net35/Microsoft.VisualStudio.Setup.Configuration.Interop.dll",
+        "lib/net35/Microsoft.VisualStudio.Setup.Configuration.Interop.xml",
+        "microsoft.visualstudio.setup.configuration.interop.1.11.2290.nupkg.sha512",
+        "microsoft.visualstudio.setup.configuration.interop.nuspec"
+      ]
+    },
+    "PdbGit/3.0.41": {
+      "sha512": "LBeCjKYbWdrZHSNVOp/5VusxjmJg4xkU8Pnz9DgSHGXApPYW3RnsOTvfpDErtnACpRaB4W16lHN91id20D4i8w==",
+      "type": "package",
+      "path": "pdbgit/3.0.41",
+      "files": [
+        "build/PdbGit.props",
+        "build/PdbGit.targets",
+        "pdbgit.3.0.41.nupkg.sha512",
+        "pdbgit.nuspec",
+        "tools/Catel.Core.dll",
+        "tools/GitTools.Core.dll",
+        "tools/ImpromptuInterface.dll",
+        "tools/LICENSE.txt",
+        "tools/LibGit2Sharp.dll",
+        "tools/NativeBinaries/amd64/git2-e0902fb.dll",
+        "tools/NativeBinaries/x86/git2-e0902fb.dll",
+        "tools/PdbGit.Tasks.dll",
+        "tools/PdbGit.exe",
+        "tools/PdbGit.props",
+        "tools/PdbGit.targets",
+        "tools/System.CommandLine.dll",
+        "tools/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "tools/pdbstr.exe",
+        "tools/winsdk.redist.txt"
+      ]
+    },
+    "SourceLink.Create.CommandLine/2.1.2": {
+      "sha512": "GQH78wEc2u4qYEU0VIizT9gBaEsFdp6/fF8UJudAO/LSKq2GehTiBZu3W8oqYEVaDPRuFTAlccmPeNzKTL+5oA==",
+      "type": "package",
+      "path": "sourcelink.create.commandline/2.1.2",
+      "files": [
+        "build/SourceLink.Create.CommandLine.targets",
+        "build/net461/SourceLink.Create.CommandLine.dll",
+        "build/netstandard1.4/SourceLink.Create.CommandLine.deps.json",
+        "build/netstandard1.4/SourceLink.Create.CommandLine.dll",
+        "sourcelink.create.commandline.2.1.2.nupkg.sha512",
+        "sourcelink.create.commandline.nuspec"
+      ]
+    },
+    "System.Collections.Immutable/1.3.1": {
+      "sha512": "n+AGX7zmiZumW9aggOkXaHzUeAS3EfeTErnkKCusyONUozbTv+kMb8VE36m+ldV6kF9g57G2c641KCdgH9E0pg==",
+      "type": "package",
+      "path": "system.collections.immutable/1.3.1",
+      "files": [
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/netstandard1.0/System.Collections.Immutable.dll",
+        "lib/netstandard1.0/System.Collections.Immutable.xml",
+        "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll",
+        "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.xml",
+        "system.collections.immutable.1.3.1.nupkg.sha512",
+        "system.collections.immutable.nuspec"
+      ]
+    },
+    "System.Reflection.Metadata/1.3.0": {
+      "sha512": "jMSCxA4LSyKBGRDm/WtfkO03FkcgRzHxwvQRib1bm2GZ8ifKM1MX1al6breGCEQK280mdl9uQS7JNPXRYk90jw==",
+      "type": "package",
+      "path": "system.reflection.metadata/1.3.0",
+      "files": [
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/netstandard1.1/System.Reflection.Metadata.dll",
+        "lib/netstandard1.1/System.Reflection.Metadata.xml",
+        "lib/portable-net45+win8/System.Reflection.Metadata.dll",
+        "lib/portable-net45+win8/System.Reflection.Metadata.xml",
+        "system.reflection.metadata.1.3.0.nupkg.sha512",
+        "system.reflection.metadata.nuspec"
+      ]
+    },
+    "System.Runtime.InteropServices.RuntimeInformation/4.3.0": {
+      "sha512": "cbz4YJMqRDR7oLeMRbdYv7mYzc++17lNhScCX0goO2XpGWdvAt60CGN+FHdePUEHCe/Jy9jUlvNAiNdM+7jsOw==",
+      "type": "package",
+      "path": "system.runtime.interopservices.runtimeinformation/4.3.0",
+      "files": [
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "lib/win8/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "lib/wpa81/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "runtimes/aot/lib/netcore50/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "runtimes/unix/lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "runtimes/win/lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "runtimes/win/lib/netcore50/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "runtimes/win/lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "system.runtime.interopservices.runtimeinformation.4.3.0.nupkg.sha512",
+        "system.runtime.interopservices.runtimeinformation.nuspec"
+      ]
+    },
+    "Microsoft.Build.Utilities/1.0.0": {
+      "type": "project",
+      "path": "../Utilities/project.json",
+      "msbuildProject": "../Utilities/Microsoft.Build.Utilities.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [],
+    ".NETFramework,Version=v4.6": [
+      "Microsoft.VisualStudio.Setup.Configuration.Interop >= 1.11.2290",
+      "PdbGit >= 3.0.41",
+      "SourceLink.Create.CommandLine >= 2.1.2",
+      "System.Collections.Immutable >= 1.3.1",
+      "System.Reflection.Metadata >= 1.3.0",
+      "System.Runtime.InteropServices.RuntimeInformation >= 4.3.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Andrius\\.nuget\\packages\\": {},
+    "C:\\Users\\Andrius\\.dotnet\\NuGetFallbackFolder": {}
+  },
+  "project": {
+    "restore": {
+      "projectUniqueName": "D:\\Beta\\src2\\msbuild\\src\\Tasks\\Microsoft.Build.Tasks.csproj",
+      "projectName": "Microsoft.Build.Tasks",
+      "projectPath": "D:\\Beta\\src2\\msbuild\\src\\Tasks\\Microsoft.Build.Tasks.csproj",
+      "projectJsonPath": "D:\\Beta\\src2\\msbuild\\src\\Tasks\\project.json",
+      "packagesPath": "C:\\Users\\Andrius\\.nuget\\packages\\",
+      "outputPath": "D:\\Beta\\src2\\msbuild\\bin\\obj\\",
+      "projectStyle": "ProjectJson",
+      "validateRuntimeAssets": true,
+      "fallbackFolders": [
+        "C:\\Users\\Andrius\\.dotnet\\NuGetFallbackFolder"
+      ],
+      "configFilePaths": [
+        "D:\\Beta\\src2\\msbuild\\NuGet.Config",
+        "C:\\Users\\Andrius\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {},
+        "https://dotnet.myget.org/F/dotnet-buildtools/api/v3/index.json": {},
+        "https://dotnet.myget.org/F/dotnet-core/api/v3/index.json": {},
+        "https://dotnet.myget.org/F/roslyn/api/v3/index.json": {},
+        "https://nuget.org/api/v2/": {},
+        "https://www.myget.org/F/aspnetvnext/": {},
+        "https://www.myget.org/F/aspnetvnext/api/v3/index.json": {}
+      },
+      "frameworks": {
+        "net46": {
+          "projectReferences": {
+            "D:\\Beta\\src2\\msbuild\\src\\Utilities\\Microsoft.Build.Utilities.csproj": {
+              "projectPath": "D:\\Beta\\src2\\msbuild\\src\\Utilities\\Microsoft.Build.Utilities.csproj"
+            }
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "net46": {
+        "dependencies": {
+          "Microsoft.VisualStudio.Setup.Configuration.Interop": "1.11.2290",
+          "PdbGit": "3.0.41",
+          "SourceLink.Create.CommandLine": "2.1.2",
+          "System.Collections.Immutable": "1.3.1",
+          "System.Reflection.Metadata": "1.3.0",
+          "System.Runtime.InteropServices.RuntimeInformation": "4.3.0"
+        }
+      }
+    }
+  }
+}

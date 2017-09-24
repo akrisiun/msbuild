@@ -79,3 +79,5 @@ using System.Windows.Markup;
 [assembly: AssemblyCompany("Microsoft Corporation")]
 [assembly: AssemblyProduct("Microsoft® Build Tools®")]
 [assembly: AssemblyCopyright("© Microsoft Corporation. All rights reserved.")]
+// [assembly: AssemblyVersion("15.5.0.0")]
+
