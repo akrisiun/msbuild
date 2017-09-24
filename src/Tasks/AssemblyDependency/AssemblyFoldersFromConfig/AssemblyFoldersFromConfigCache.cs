@@ -6,6 +6,10 @@ using Microsoft.Build.Shared;
 
 namespace Microsoft.Build.Tasks.AssemblyFoldersFromConfig
 {
+    // public     internal sealed partial class XImmutableHashSet<T> : IReadOnlyCollection<T>
+         // IImmutableSet<T>
+         //, IHashKeyCollection<T>, IReadOnlyCollection<T>, ICollection<T>, ISet<T>, ICollection, IStrongEnumerable<T, ImmutableHashSet<T>.Enumerator>
+    
     /// <summary>
     /// Contains information about entries in the AssemblyFoldersEx registry keys.
     /// </summary>
@@ -13,8 +17,9 @@ namespace Microsoft.Build.Tasks.AssemblyFoldersFromConfig
     {
         /// <summary>
         /// Set of files in ALL AssemblyFolderFromConfig directories
+        //   ImmutableHashSet<string>
         /// </summary>
-        private readonly ImmutableHashSet<string> _filesInDirectories = ImmutableHashSet<string>.Empty;
+        private readonly ImmutableHashSet<string>  _filesInDirectories = ImmutableHashSet<string>.Empty;
 
         /// <summary>
         /// File exists delegate we are replacing
@@ -45,6 +50,7 @@ namespace Microsoft.Build.Tasks.AssemblyFoldersFromConfig
                     .SelectMany(
                         assemblyFolder =>
                             Directory.GetFiles(assemblyFolder.DirectoryPath, "*.*", SearchOption.TopDirectoryOnly))
+                    //  .ToList(); // 
                     .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
             }
         }

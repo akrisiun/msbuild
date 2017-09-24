@@ -226,3 +226,5 @@ Tools/analyzers/
 Tools/dotnetcli/sdk/1.0.0-preview3-003686/
 Tools/dotnetcli/shared/
 ref/
+src/Framework/binMicrosoft.Build.Framework.xml
+src/Utilities/binMicrosoft.Build.Utilities.Core.xml

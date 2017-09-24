@@ -1698,8 +1698,19 @@ namespace Microsoft.Build.Evaluation
             }
         }
 
+        static Assembly immutableAsm;
+
         private void EvaluateItemElement(bool itemGroupConditionResult, ProjectItemElement itemElement, LazyItemEvaluator<P, I, M, D> lazyEvaluator)
         {
+            if (immutableAsm == null)
+            {
+                var path = AppDomain.CurrentDomain.BaseDirectory
+                    + @"\System.Collections.Immutable.dll";
+                if (File.Exists(path))
+                    immutableAsm = Assembly.LoadFile(path);
+            }
+
+
 #if FEATURE_MSBUILD_DEBUGGER
             if (DebuggerManager.DebuggingEnabled)
             {
