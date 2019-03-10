@@ -2019,13 +2019,13 @@ namespace Microsoft.Build.CommandLine
             commandLineSwitches.Append(switchesFromAutoResponseFile);    // lowest precedence
             commandLineSwitches.Append(switchesNotFromAutoResponseFile);
 
-#if DEBUG
+// #if DEBUG
             if (commandLineSwitches[CommandLineSwitches.ParameterlessSwitch.WaitForDebugger])
             {
-                BuildManager.WaitForDebugger = true;
-
                 if (!Debugger.IsAttached)
                 {
+                    BuildManager.WaitForDebugger = true;
+
                     Process currentProcess = Process.GetCurrentProcess();
                     Console.WriteLine($"Waiting for debugger to attach... ({currentProcess.MainModule.FileName} PID {currentProcess.Id})");
                     while (!Debugger.IsAttached)
@@ -2034,7 +2034,7 @@ namespace Microsoft.Build.CommandLine
                     }
                 }
             }
-#endif
+// #endif
 
             // show copyright message if nologo switch is not set
             // NOTE: we heed the nologo switch even if there are switch errors

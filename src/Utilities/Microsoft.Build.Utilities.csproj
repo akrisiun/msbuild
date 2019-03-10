@@ -21,7 +21,7 @@
     <ApplyPartialNgenOptimization>true</ApplyPartialNgenOptimization>
 
     <!-- C:\Program Files\dotnet\sdk\2.2.104\NuGet.targets-->
-    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
+    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.1.202</MSBuildToolsPath2>
     <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
   </PropertyGroup>
 

@@ -231,7 +231,7 @@ namespace Microsoft.Build.Execution
         /// </summary>
         private DateTime _instantiationTimeUtc;
 
-#if DEBUG
+#if true // DEBUG
         /// <summary>
         /// <code>true</code> to wait for a debugger to be attached, otherwise <code>false</code>.
         /// </summary>

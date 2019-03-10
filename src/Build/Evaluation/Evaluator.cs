@@ -2098,6 +2098,9 @@ namespace Microsoft.Build.Evaluation
                         return;
                     }
 
+                    Console.WriteLine(
+                    $"CouldNotResolveSdk MSB4236: SdkLocation={importElement.SdkLocation} ParsedSdkReference= { importElement.ParsedSdkReference.ToString()}");
+
                     ProjectErrorUtilities.ThrowInvalidProject(importElement.SdkLocation, "CouldNotResolveSdk", importElement.ParsedSdkReference.ToString());
                 }
 

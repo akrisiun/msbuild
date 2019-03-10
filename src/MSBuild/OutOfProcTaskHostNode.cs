@@ -164,7 +164,11 @@ namespace Microsoft.Build.CommandLine
         /// <summary>
         /// The task object cache.
         /// </summary>
+#if CLR2COMPATIBILITY4
+        private object _registeredTaskObjectCache;
+#else
         private RegisteredTaskObjectCacheBase _registeredTaskObjectCache;
+#endif
 #endif
 
         /// <summary>

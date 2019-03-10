@@ -8,17 +8,17 @@
          in .NETStandard. -->
     <!--<TargetFrameworks>netcoreapp2.1</TargetFrameworks>-->
     <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
-    <PackageVersion>16.0.453</PackageVersion>
+    <PackageVersion>16.0.454</PackageVersion>
     <FileVersion>16.0.453.60347</FileVersion>
-    <Version>16.1.0.0</Version>
+    <Version>15.1.0.0</Version>
 
-    <TargetFrameworks Condition="'$(OsEnvironment)'=='windows'">$(FullFrameworkTFM);netcoreapp2.1</TargetFrameworks>
+    <!--<TargetFrameworks Condition="'$(OsEnvironment)'=='windows'">$(FullFrameworkTFM);netcoreapp2.1</TargetFrameworks>-->
     <TargetFrameworks Condition="'$(MonoBuild)'=='true'">$(RuntimeOutputTargetFrameworks)</TargetFrameworks>
     <RootNamespace>Microsoft.Build</RootNamespace>
     <AssemblyName>Microsoft.Build</AssemblyName>
 
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>$(DefineConstants);BUILD_ENGINE</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;BUILD_ENGINE</DefineConstants>
 
     <EnableDefaultItems>false</EnableDefaultItems>
 
@@ -34,6 +34,9 @@
 
     <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
     <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>TRACE;DEBUG;FEATURE_DEBUG_LAUNCH;BUILD_ENGINE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

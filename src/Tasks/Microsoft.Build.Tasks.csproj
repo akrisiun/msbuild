@@ -14,15 +14,22 @@
     <CreateTlb Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">true</CreateTlb>
     
     <IsPackable>true</IsPackable>
-    <PackageVersion>16.0.453</PackageVersion>
-    <FileVersion>16.0.453.60347</FileVersion>
+    <Version>15.1.0.0</Version>
+    <PackageVersion>16.0.454</PackageVersion>
+    <FileVersion>16.0.454.60347</FileVersion>
 
     <Description>This package contains the $(MSBuildProjectName) assembly which implements the commonly used tasks of MSBuild.</Description>
     <IncludeSatelliteOutputInPack>false</IncludeSatelliteOutputInPack>
     <ApplyPartialNgenOptimization>true</ApplyPartialNgenOptimization>
 
-    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
-    <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
+    <!--
+    <MSBuildToolsPath2>c:\bin\dotb</MSBuildToolsPath2>
+    -->
+    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.1.202</MSBuildToolsPath2>
+    <!--<NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath)\NuGet.targets</NuGetRestoreTargets>-->
+    <NuGetRestoreTargets
+        Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
+  
   </PropertyGroup>
 
   <ItemGroup>

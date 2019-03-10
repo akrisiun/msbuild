@@ -5,7 +5,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <MSBuildExtensionsPath>c:\bin\dotb</MSBuildExtensionsPath>
+    <MSBuildToolsVersion2>Current</MSBuildToolsVersion2>
+    <MSBuildToolsPath2>c:\bin\dotb</MSBuildToolsPath2>
+
+    <!--
     <TargetFrameworks>$(RuntimeOutputTargetFrameworks)</TargetFrameworks>
+    -->
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <PlatformTarget>$(RuntimeOutputPlatformTarget)</PlatformTarget>
 
     <!-- Set RuntimeIdentifiers so that NuGet will restore for both AnyCPU as well as x86 and x64.
@@ -35,18 +42,39 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <AddAppConfigToBuildOutputs>false</AddAppConfigToBuildOutputs>
 
-    <DebugType Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">full</DebugType><!-- Work around arcade stomping on symbols for same-program-different-arches. -->
+    <DebugType Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">full</DebugType>
+    <!-- Work around arcade stomping on symbols for same-program-different-arches. -->
 
     <IsPackable>true</IsPackable>
     <!--16.0.453.60347-->
-    <Version>16.0.0.0</Version>
-    <PackageVersion>16.0.453</PackageVersion>
-    <FileVersion>16.0.453.60347</FileVersion>
+    <!--<Version>16.0.0.0</Version>-->
+    <Version>15.1.0.0</Version>
+    <PackageVersion>16.0.454</PackageVersion>
+    <FileVersion>16.0.454.60347</FileVersion>
 
     <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
-    <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
+    <!---->
+    <!--
+    -->
+    <!--<MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.1.202</MSBuildToolsPath2>-->
+    <MSBuildToolsPath2>c:\bin\dotb</MSBuildToolsPath2>
+    <!--<NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath)\NuGet.targets</NuGetRestoreTargets>-->
+    <NuGetRestoreTargets
+        Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
+  
   </PropertyGroup>
+  <PropertyGroup>
+    <DebugType Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">full</DebugType>
+    <DefineConstants>TRACE;DEBUG;FEATURE_DEBUG_LAUNCH;FEATURE_APPDOMAIN4;CLR2COMPATIBILITY1</DefineConstants>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(TargetRuntime)' == ''">
+    <TargetRuntime>Managed</TargetRuntime>
+  </PropertyGroup>
+  <Target Name="_GetProjectReferenceTargetFrameworkProperties">
+  </Target>
+
 
   <PropertyGroup Condition="'$(MonoBuild)' == 'true'">
     <TargetExt>.dll</TargetExt>
@@ -200,7 +228,6 @@
     <Compile Include="XMake.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
-    <None Include="project.json" />
     <!-- This is to enable CodeMarkers in MSBuild.exe -->
     <!-- Win32 RC Files -->
     <RCResourceFile Include="native.rc" />
@@ -264,16 +291,10 @@
        in resolving references using them instead of the correct build-time references.
        Instead, add them just afterward, before assigning target paths/copying to
        the bin folder. -->
-  <Target Name="AddRefAssemblies"
-          DependsOnTargets="ResolveAssemblyReferences"
-          BeforeTargets="AssignTargetPaths">
+  <Target Name="AddRefAssemblies" DependsOnTargets="ResolveAssemblyReferences" BeforeTargets="AssignTargetPaths">
     <ItemGroup>
-      <Content Include="$(NuGetPackageRoot)\netstandard.library\2.0.3\build\netstandard2.0\ref\netstandard.dll"
-               Link="ref\netstandard.dll"
-               CopyToOutputDirectory="PreserveNewest" />
-      <Content Include="$(NuGetPackageRoot)\netstandard.library\2.0.3\build\netstandard2.0\ref\mscorlib.dll"
-               Link="ref\mscorlib.dll"
-               CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(NuGetPackageRoot)\netstandard.library\2.0.3\build\netstandard2.0\ref\netstandard.dll" Link="ref\netstandard.dll" CopyToOutputDirectory="PreserveNewest" />
+      <Content Include="$(NuGetPackageRoot)\netstandard.library\2.0.3\build\netstandard2.0\ref\mscorlib.dll" Link="ref\mscorlib.dll" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
   </Target>
 
@@ -335,6 +356,29 @@
       -->
       <_TargetPathsToSymbols Remove="@(_TargetPathsToSymbols)" />
     </ItemGroup>
+
+  </Target>
+
+  <Target Name="BeforeBuild">
+    <Message Importance="High" Text="DotNetDir=$(DotNetDir) MSBuildExtensionsPath=$(MSBuildExtensionsPath) $(MSBuildToolsVersion) " />
+    <!--<Exec Command="$(DotNetDir)/dotnet.exe build $(SourceDir) -o $(LibDir) -c Debug - - no-restore" />-->
+  </Target>
+  <Target Name="AfterBuild">
+    <Message Importance="High" Text="AfterBuild ||| DotNetDir=$(DotNetDir) MSBuildExtensionsPath=$(MSBuildExtensionsPath) $(MSBuildToolsVersion) " />
+  </Target>
+  <Target Name="PostBuildTask" AfterTargets="Build">
+    <Message Importance="High" Text="MSBuildRuntimeType=$(MSBuildRuntimeType)" />
+    <Message Importance="High" Text="PostBuildTask ||| DotNetDir=$(DotNetDir) MSBuildExtensionsPath=$(MSBuildExtensionsPath) $(MSBuildToolsVersion) " />
+  </Target>
+
+  <Target Name="Build">
+    <!--
+    Condition=" '$(_InvalidConfigurationWarning)' != 'true' "
+    Condition="'$(MSBuildRuntimeType)' == 'Full'"  
+    -->
+    <Message Importance="High" Text="Build ||| MSBuildExtensionsPath=$(MSBuildExtensionsPath)\$(MSBuildToolsVersion) " />
+    <!--DependsOnTargets="$(BuildDependsOn)"
+          Returns="@(TargetPathWithTargetPlatformMoniker)" />-->
 
   </Target>
 
