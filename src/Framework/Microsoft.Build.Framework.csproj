@@ -3,10 +3,17 @@
     <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
     <GenerateReferenceAssemblySources>true</GenerateReferenceAssemblySources>
     <CreateTlb Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">true</CreateTlb>
+    
     <IsPackable>true</IsPackable>
+    <PackageVersion>16.0.453</PackageVersion>
+    <FileVersion>16.0.453.60347</FileVersion>
+
     <Description>This package contains the $(MSBuildProjectName) assembly which is a common assembly used by other MSBuild assemblies.</Description>
     <IncludeSatelliteOutputInPack>false</IncludeSatelliteOutputInPack>
     <ApplyPartialNgenOptimization>true</ApplyPartialNgenOptimization>
+
+    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
+    <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="BinaryWriterExtensions.cs" />

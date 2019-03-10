@@ -7,10 +7,10 @@
     <!-- Node reuse requires an API new to .NET Core 2.1 not yet available
          in .NETStandard. -->
     <!--<TargetFrameworks>netcoreapp2.1</TargetFrameworks>-->
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
-    <PackageVersion>16.1.0.310</PackageVersion>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <PackageVersion>16.0.453</PackageVersion>
+    <FileVersion>16.0.453.60347</FileVersion>
     <Version>16.1.0.0</Version>
-    <FileVersion>16.1.0.310</FileVersion>
 
     <TargetFrameworks Condition="'$(OsEnvironment)'=='windows'">$(FullFrameworkTFM);netcoreapp2.1</TargetFrameworks>
     <TargetFrameworks Condition="'$(MonoBuild)'=='true'">$(RuntimeOutputTargetFrameworks)</TargetFrameworks>
@@ -31,6 +31,9 @@
 
     <!-- Do not generate a warning that our 'stable' package should not have a prerelease dependency. -->
     <NoWarn>$(NoWarn);NU5104</NoWarn>
+
+    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
+    <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
   </PropertyGroup>
 
   <ItemGroup>

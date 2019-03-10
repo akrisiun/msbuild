@@ -10,11 +10,19 @@
     <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
     <EnableDocumentationFile>true</EnableDocumentationFile>
     <GenerateReferenceAssemblySources>true</GenerateReferenceAssemblySources>
+
     <!-- <CreateTlb>true</CreateTlb> --><!-- This was created in VS but not published, so I don't think it's needed -->
+    <PackageVersion>16.0.453</PackageVersion>
+    <FileVersion>16.0.453.60347</FileVersion>
+
     <IsPackable>true</IsPackable>
     <Description>This package contains the $(MSBuildProjectName) assembly which is used to implement custom MSBuild tasks.</Description>
     <IncludeSatelliteOutputInPack>false</IncludeSatelliteOutputInPack>
     <ApplyPartialNgenOptimization>true</ApplyPartialNgenOptimization>
+
+    <!-- C:\Program Files\dotnet\sdk\2.2.104\NuGet.targets-->
+    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
+    <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
   </PropertyGroup>
 
   <ItemGroup>

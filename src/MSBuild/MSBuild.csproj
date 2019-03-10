@@ -38,9 +38,14 @@
     <DebugType Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">full</DebugType><!-- Work around arcade stomping on symbols for same-program-different-arches. -->
 
     <IsPackable>true</IsPackable>
-    <PackageVersion>16.1.0.310</PackageVersion>
-    <Version>16.1.0.0</Version>
-    <FileVersion>16.1.0.310</FileVersion>
+    <!--16.0.453.60347-->
+    <Version>16.0.0.0</Version>
+    <PackageVersion>16.0.453</PackageVersion>
+    <FileVersion>16.0.453.60347</FileVersion>
+
+    <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
+    <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(MonoBuild)' == 'true'">
