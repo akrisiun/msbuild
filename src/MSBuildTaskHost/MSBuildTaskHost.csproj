@@ -5,7 +5,8 @@
   <Import Project="$(RepoRoot)eng\ProducesNoOutput.Settings.props" Condition="'$(MSBuildRuntimeType)' == 'Core' or '$(MachineIndependentBuild)' == 'true' or '$(MonoBuild)' == 'true'" />
 
   <PropertyGroup>
-    <TargetFramework>net35</TargetFramework>    
+    <!-- <TargetFramework>net35</TargetFramework>    -->
+    <TargetFramework>net45</TargetFramework>    
     <OutputType>Exe</OutputType>
     <PlatformTarget Condition="'$(Platform)' == 'x64'">x64</PlatformTarget>
     <PlatformTarget Condition="'$(Platform)' == 'AnyCPU'">x86</PlatformTarget>

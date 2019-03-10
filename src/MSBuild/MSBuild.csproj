@@ -11,7 +11,7 @@
     <!-- Set RuntimeIdentifiers so that NuGet will restore for both AnyCPU as well as x86 and x64.
          This is important for the MSBuild.VSSetup project, which "references" both the x86 and x64
          versions of this project -->
-    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win7-x64</RuntimeIdentifiers>
 
     <EnableDefaultItems>false</EnableDefaultItems>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -27,7 +27,6 @@
          https://github.com/Microsoft/msbuild/issues/834 Long term
          two files should be generated from a single source. -->
     <AppConfig Condition="'$(Platform)' == 'x64'">app.amd64.config</AppConfig>
-    <IsPackable>true</IsPackable>
     <ContentTargetFolders>contentFiles</ContentTargetFolders>
     <BuildOutputTargetFolder>contentFiles\any\</BuildOutputTargetFolder>
     <PackageId>Microsoft.Build.Runtime</PackageId>
@@ -37,6 +36,11 @@
     <AddAppConfigToBuildOutputs>false</AddAppConfigToBuildOutputs>
 
     <DebugType Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">full</DebugType><!-- Work around arcade stomping on symbols for same-program-different-arches. -->
+
+    <IsPackable>true</IsPackable>
+    <PackageVersion>16.1.0.310</PackageVersion>
+    <Version>16.1.0.0</Version>
+    <FileVersion>16.1.0.310</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(MonoBuild)' == 'true'">

@@ -1,71 +1,95 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <Import Project="..\Shared\FileSystemSources.proj" />
-  <Import Project="..\Shared\DebuggingSources.proj" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- Node reuse requires an API new to .NET Core 2.1 not yet available
-         in .NETStandard. -->
-    <!--<TargetFrameworks>netcoreapp2.1</TargetFrameworks>-->
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
-    <PackageVersion>16.1.0.310</PackageVersion>
-    <Version>16.1.0.0</Version>
-    <FileVersion>16.1.0.310</FileVersion>
-
-    <TargetFrameworks Condition="'$(OsEnvironment)'=='windows'">$(FullFrameworkTFM);netcoreapp2.1</TargetFrameworks>
-    <TargetFrameworks Condition="'$(MonoBuild)'=='true'">$(RuntimeOutputTargetFrameworks)</TargetFrameworks>
+    <TargetFramework>net47</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Build</RootNamespace>
     <AssemblyName>Microsoft.Build</AssemblyName>
-
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);BUILD_ENGINE</DefineConstants>
-
-    <EnableDefaultItems>false</EnableDefaultItems>
-
     <GenerateReferenceAssemblySources>true</GenerateReferenceAssemblySources>
-    <CreateTlb Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">true</CreateTlb>
-    <IsPackable>true</IsPackable>
-    <Description>This package contains the $(MSBuildProjectName) assembly which is used to create, edit, and evaluate MSBuild projects.</Description>
-    <IncludeSatelliteOutputInPack>false</IncludeSatelliteOutputInPack>
-    <ApplyPartialNgenOptimization>true</ApplyPartialNgenOptimization>
-
-    <!-- Do not generate a warning that our 'stable' package should not have a prerelease dependency. -->
-    <NoWarn>$(NoWarn);NU5104</NoWarn>
+    <EnableDocumentationFile>true</EnableDocumentationFile>
+    <UpdateNuGetPackageDependencies>true</UpdateNuGetPackageDependencies>
+    
   </PropertyGroup>
-
+  
+  <!-- Default configurations to help VS understand the configurations -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DefineConstants>$(DefineConstants);BUILD_ENGINE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DefineConstants>$(DefineConstants);BUILD_ENGINE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DefineConstants>$(DefineConstants);BUILD_ENGINE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DefineConstants>$(DefineConstants);BUILD_ENGINE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DefineConstants>$(DefineConstants);BUILD_ENGINE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DefineConstants>$(DefineConstants);BUILD_ENGINE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug-MONO|AnyCPU'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-MONO|AnyCPU'">
+  </PropertyGroup>
+  <!-- This item group is for classes that exist in .NET Framework but not in .NET Core.
+       The code here was generally copied from the .NET Framework reference source and
+       modified to compile for .NET Core -->
+  <ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETFramework'">
+    <Compile Include="..\Shared\Compat\Base64Encoder.cs">
+      <Link>SharedUtilities\Compat\Base64Encoder.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\BinHexEncoder.cs">
+      <Link>SharedUtilities\Compat\BinHexEncoder.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\SecureStringHasher.cs">
+      <Link>SharedUtilities\Compat\SecureStringHasher.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\TypeExtensions.cs">
+      <Link>SharedUtilities\Compat\TypeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\ValidateNames.cs">
+      <Link>SharedUtilities\Compat\ValidateNames.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\XmlCharType.cs">
+      <Link>SharedUtilities\Compat\XmlCharType.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\XmlReservedNs.cs">
+      <Link>SharedUtilities\Compat\XmlReservedNs.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\XmlTextEncoder.cs">
+      <Link>SharedUtilities\Compat\XmlTextEncoder.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\XmlTextWriter.cs">
+      <Link>SharedUtilities\Compat\XmlTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\SerializableAttribute.cs">
+      <Link>SharedUtilities\Compat\SerializableAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\defaultbinder.cs">
+      <Link>SharedUtilities\Compat\defaultbinder.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Compat\PipeSecurity.cs">
+      <Link>SharedUtilities\Compat\PipeSecurity.cs</Link>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Framework\Microsoft.Build.Framework.csproj" />
-
-    <PackageReference Include="System.Collections.Immutable" />
-    <PackageReference Include="System.Threading.Tasks.Dataflow" />
-
-    <PackageReference Include="System.Reflection.Metadata" Condition="'$(MonoBuild)' == 'true'" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.IO.Compression" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">
-    <PackageReference Include="System.Diagnostics.TraceSource" />
-    <PackageReference Include="System.Reflection.Metadata" />
-    <PackageReference Include="System.Reflection.TypeExtensions" />
-    <PackageReference Include="System.Runtime.Loader" />
-    <PackageReference Include="System.Security.Principal.Windows" Condition="'$(TargetFramework)' == 'netcoreapp2.1'" />
-    <PackageReference Include="System.Text.Encoding.CodePages" />
-    <!-- Need Win32 API on .NET Core to ping registry to determine long path support -->
-    <PackageReference Include="Microsoft.Win32.Registry" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Shared\BinaryWriterExtensions.cs" Link="BinaryWriterExtensions.cs" />
+    <Compile Condition="'$(NetCoreBuild)' == 'true'" Include="..\Shared\Compat\SafeHandleZeroOrMinusOneIsInvalid.cs">
+      <Link>SharedUtilities\Compat\SafeHandleZeroOrMinusOneIsInvalid.cs</Link>
+    </Compile>
     <Compile Include="..\Shared\EncodingUtilities.cs">
       <Link>SharedUtilities\EncodingUtilities.cs</Link>
     </Compile>
     <Compile Include="..\Shared\EnvironmentUtilities.cs">
       <Link>SharedUtilities\EnvironmentUtilities.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\FileUtilities.GetFolderPath.cs" Condition="'$(FeatureSpecialFolders)' != 'true'">
+      <Link>SharedUtilities\FileUtilities.GetFolderPath.cs</Link>
     </Compile>
     <Compile Include="..\Shared\BuildEnvironmentHelper.cs">
       <Link>SharedUtilities\BuildEnvironmentHelper.cs</Link>
@@ -93,8 +117,8 @@
       <Link>BackEnd\Components\RequestBuilder\IntrinsicTasks\Constants.cs</Link>
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
     </Compile>
-    <Compile Include="..\Shared\IConstrainedEqualityComparer.cs">
-      <Link>IConstrainedEqualityComparer.cs</Link>
+    <Compile Include="..\Shared\HybridDictionary.cs">
+      <Link>Collections\HybridDictionary.cs</Link>
     </Compile>
     <Compile Include="..\Shared\NGen.cs">
       <Link>SharedUtilities\NGen.cs</Link>
@@ -105,9 +129,6 @@
     <Compile Include="..\Shared\PropertyParser.cs">
       <Link>BackEnd\Components\RequestBuilder\IntrinsicTasks\PropertyParser.cs</Link>
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
-    </Compile>
-    <Compile Include="..\Shared\StringExtensions.cs">
-      <Link>SharedUtilities\StringExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Shared\ReadOnlyEmptyCollection.cs">
       <Link>Collections\ReadOnlyEmptyCollection.cs</Link>
@@ -131,9 +152,9 @@
     <Compile Include="..\Shared\INodePacket.cs" />
     <Compile Include="..\Shared\INodePacketFactory.cs" />
     <Compile Include="..\Shared\INodePacketHandler.cs" />
-    <Compile Include="..\Shared\ITranslatable.cs" />
-    <Compile Include="..\Shared\ITranslator.cs" />
-    <Compile Include="..\Shared\BinaryTranslator.cs" />
+    <Compile Include="..\Shared\INodePacketTranslatable.cs" />
+    <Compile Include="..\Shared\INodePacketTranslator.cs" />
+    <Compile Include="..\Shared\NodePacketTranslator.cs" />
     <Compile Include="..\Shared\LogMessagePacketBase.cs" />
     <Compile Include="..\Shared\NodePacketFactory.cs" />
     <Compile Include="..\Shared\NodeBuildComplete.cs" />
@@ -161,15 +182,8 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BackEnd\BuildManager\BuildManager.cs" />
     <Compile Include="BackEnd\BuildManager\BuildParameters.cs" />
-    <Compile Include="BackEnd\BuildManager\CacheAggregator.cs" />
-    <Compile Include="BackEnd\Components\Caching\ConfigCacheWithOverride.cs" />
-    <Compile Include="BackEnd\Components\Caching\ResultsCacheWithOverride.cs" />
-    <Compile Include="Graph\GraphBuildResult.cs" />
-    <Compile Include="Graph\GraphBuildSubmission.cs" />
-    <Compile Include="Graph\GraphBuildRequestData.cs" />
     <Compile Include="BackEnd\BuildManager\BuildSubmission.cs" />
     <Compile Include="BackEnd\BuildManager\LegacyThreadingData.cs" />
-    <Compile Include="BackEnd\BuildManager\RequestedProjectState.cs" />
     <Compile Include="BackEnd\Components\BuildComponentFactoryCollection.cs" />
     <Compile Include="BackEnd\Components\Caching\IRegisteredTaskObjectCache.cs" />
     <Compile Include="..\Shared\RegisteredTaskObjectCacheBase.cs" />
@@ -206,21 +220,8 @@
     <Compile Include="BackEnd\Components\Scheduler\ScheduleTimeRecord.cs" />
     <Compile Include="BackEnd\Components\Scheduler\SchedulingPlan.cs" />
     <Compile Include="BackEnd\Components\SdkResolution\DefaultSdkResolver.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\ISdkResolverService.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\OutOfProcNodeSdkResolverService.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\OutOfProcNodeSdkResolverServiceFactory.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\SdkLogger.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\CachingSdkResolverService.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\SdkResolverContext.cs" />
+    <Compile Include="BackEnd\Components\SdkResolution\SdkResolution.cs" />
     <Compile Include="BackEnd\Components\SdkResolution\SdkResolverLoader.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\SdkResolverManifest.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\SdkResolverRequest.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\MainNodeSdkResolverService.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\SdkResolverService.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\HostedSdkResolverServiceBase.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\SdkResult.cs" />
-    <Compile Include="BackEnd\Components\SdkResolution\SdkResultFactory.cs" />
-    <Compile Include="BackEnd\Node\LoggingNodeConfiguration.cs" />
     <Compile Include="BackEnd\Shared\ConfigurationMetadata.cs" />
     <Compile Include="Collections\ConcurrentQueueExtensions.cs" />
     <Compile Include="Collections\ConcurrentStackExtensions.cs" />
@@ -239,17 +240,11 @@
     </Compile>
     <Compile Include="Construction\ImplicitImportLocation.cs" />
     <Compile Include="Construction\ProjectSdkElement.cs" />
-    <Compile Include="Definition\ProjectOptions.cs" />
     <Compile Include="Definition\NewProjectFileOptions.cs" />
     <Compile Include="Definition\ProjectCollectionChangedEventArgs.cs" />
     <Compile Include="Definition\ProjectImportPathMatch.cs" />
     <Compile Include="Definition\ProjectLoadSettings.cs" />
     <Compile Include="Definition\ToolsetLocalReader.cs" />
-    <Compile Include="Evaluation\Context\EvaluationContext.cs" />
-    <Compile Include="Evaluation\Profiler\EvaluationLocationMarkdownPrettyPrinter.cs" />
-    <Compile Include="Evaluation\Profiler\EvaluationLocationPrettyPrinterBase.cs" />
-    <Compile Include="Evaluation\Profiler\EvaluationLocationTabSeparatedPrettyPrinter.cs" />
-    <Compile Include="Evaluation\Profiler\EvaluationProfiler.cs" />
     <Compile Include="Evaluation\ItemSpec.cs" />
     <Compile Include="Evaluation\ItemsAndMetadataPair.cs" />
     <Compile Include="Evaluation\LazyItemEvaluator.cs" />
@@ -259,12 +254,6 @@
     <Compile Include="Evaluation\LazyItemEvaluator.ItemFactoryWrapper.cs" />
     <Compile Include="Evaluation\LazyItemEvaluator.RemoveOperation.cs" />
     <Compile Include="Evaluation\MetadataReference.cs" />
-    <Compile Include="Graph\ProjectGraphEntryPoint.cs" />
-    <Compile Include="Graph\ProjectGraph.cs" />
-    <Compile Include="Graph\ProjectGraphNode.cs" />
-    <Compile Include="Logging\EvaluationLocationIdAgnosticComparer.cs" />
-    <Compile Include="Logging\ProfilerLogger.cs" />
-    <Compile Include="Evaluation\Profiler\ProfilerResultPrettyPrinter.cs" />
     <Compile Include="Evaluation\ProjectChangedEventArgs.cs" />
     <Compile Include="Evaluation\ProjectXmlChangedEventArgs.cs" />
     <Compile Include="Construction\Solution\SolutionProjectGenerator.cs" />
@@ -284,7 +273,7 @@
     <Compile Include="BackEnd\Components\Caching\ConfigCache.cs" />
     <Compile Include="BackEnd\Components\Caching\IPropertyCache.cs" />
     <Compile Include="BackEnd\Components\Caching\IResultsCache.cs" />
-    <Compile Include="BackEnd\Components\Communications\TranslatorExtensions.cs" />
+    <Compile Include="BackEnd\Components\Communications\NodePacketTranslatorExtensions.cs" />
     <Compile Include="BackEnd\Components\Communications\NodeProviderOutOfProc.cs" />
     <Compile Include="BackEnd\Components\Communications\NodeProviderOutOfProcBase.cs" />
     <Compile Include="BackEnd\Components\Communications\NodeProviderOutOfProcTaskHost.cs" />
@@ -355,6 +344,7 @@
     <Compile Include="Collections\CopyOnWritePropertyDictionary.cs" />
     <Compile Include="Collections\IDeepCloneable.cs" />
     <Compile Include="..\Shared\MSBuildNameIgnoreCaseComparer.cs" />
+    <Compile Include="Collections\FilteringEnumerable.cs" />
     <Compile Include="Collections\HashTableUtility.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
@@ -362,10 +352,14 @@
     <Compile Include="Collections\IImmutable.cs" />
     <Compile Include="Collections\MultiDictionary.cs" />
     <Compile Include="Collections\IValued.cs" />
+    <Compile Include="Collections\OrdinalKeyedComparer.cs" />
+    <Compile Include="Collections\OrdinalIgnoreCaseKeyedComparer.cs" />
     <Compile Include="Collections\PropertyDictionary.cs" />
     <Compile Include="..\Shared\ReadOnlyCollection.cs" />
     <Compile Include="Collections\ReadOnlyConvertingDictionary.cs" />
+    <Compile Include="Collections\Triple.cs" />
     <!-- ######################## -->
+    <Compile Include="Collections\WeakReference.cs" />
     <Compile Include="Collections\WeakValueDictionary.cs" />
     <!-- #### CONSTRUCTION MODEL ### -->
     <Compile Include="Construction\ProjectElement.cs" />
@@ -400,6 +394,8 @@
     <Compile Include="Construction\Solution\SolutionFile.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
+    <Compile Include="Debugger\DebuggerLocalType.cs" />
+    <Compile Include="Debugger\DebuggerManager.cs" />
     <!-- #### DEFINITION MODEL ### -->
     <Compile Include="Definition\BuiltInMetadata.cs" />
     <Compile Include="Definition\ProjectCollection.cs" />
@@ -411,8 +407,8 @@
     <Compile Include="Definition\ResolvedImport.cs" />
     <Compile Include="Definition\SubToolset.cs" />
     <Compile Include="Definition\Toolset.cs" />
-    <Compile Include="Definition\ToolsetConfigurationReader.cs" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <Compile Include="..\Shared\ToolsetElement.cs" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Compile Include="Definition\ToolsetConfigurationReader.cs" Condition="$(FeatureSystemConfiguration) == 'true'" />
+    <Compile Include="..\Shared\ToolsetElement.cs" Condition="$(FeatureSystemConfiguration) == 'true'">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Definition\ToolsetPropertyDefinition.cs" />
@@ -521,7 +517,6 @@
     <Compile Include="Evaluation\ProjectParser.cs" />
     <Compile Include="Evaluation\ProjectRootElementCache.cs" />
     <Compile Include="Evaluation\ProjectStringCache.cs" />
-    <Compile Include="Evaluation\SemiColonTokenizer.cs" />
     <Compile Include="Evaluation\StringMetadataTable.cs" />
     <Compile Include="Evaluation\ExpressionShredder.cs" />
     <Compile Include="Evaluation\Evaluator.cs" />
@@ -609,21 +604,18 @@
     <Compile Include="Resources\Constants.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
-    <Compile Include="Resources\MSBuildAssemblyFileVersion.cs" />
     <!-- ######################## -->
     <!-- ######################## -->
     <!-- ######################## -->
     <Compile Include="Utilities\EngineFileUtilities.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
-    <Compile Include="Utilities\FileSpecMatchTester.cs" />
     <Compile Include="Utilities\RegistryKeyWrapper.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Utilities\Utilities.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
-    <Compile Include="Xml\ProjectXmlUtilities.XmlElementChildIterator.cs" />
     <Compile Include="Xml\ProjectXmlUtilities.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
@@ -732,7 +724,7 @@
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Shared\Tracing.cs" />
-    <Compile Include="..\Shared\CoreCLRAssemblyLoader.cs" Condition="'$(TargetFrameworkIdentifier)'!='.NETFramework'" />
+    <Compile Include="..\Shared\CoreCLRAssemblyLoader.cs" Condition="'$(NetCoreBuild)'=='true'" />
     <Compile Include="..\Shared\TypeLoader.cs">
       <Link>SharedUtilities\TypeLoader.cs</Link>
     </Compile>
@@ -754,8 +746,6 @@
     <Compile Include="FxCopExclusions\Microsoft.Build.Suppressions.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
-    <Compile Include="Evaluation\LazyItemEvaluator.EvaluatorData.cs" />
-
     <!-- Win32 RC Files -->
     <RCResourceFile Include="native.rc" />
     <!-- Resource Files -->
@@ -770,8 +760,25 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Collections\RetrievableEntryHashSet\Originals\*" />
+  <ItemGroup Condition="'$(NetCoreBuild)' != 'true'">
+    <!-- Assemblies Files we depend on -->
+    <!-- Be conservative when adding references... adding System.Xml.Linq can add .47 sec cold start time to our launch time, or 80 ms to warm start time -->
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Threading.Tasks">
+      <HintPath>$(FrameworkPathOverride)\System.Threading.Tasks.dll</HintPath>
+    </Reference>
   </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\Microsoft.Build.Framework.csproj">
+      <Project>{571F09DB-A81A-4444-945C-6F7B530054CD}</Project>
+      <Name>Microsoft.Build.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Evaluation\LazyItemEvaluator.EvaluatorData.cs" />
+    <None Include="project.json" />
+  </ItemGroup>
 </Project>
