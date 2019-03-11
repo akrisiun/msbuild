@@ -32,10 +32,11 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 
     <!-- Create English satellite assemblies (which shouldn't be required, but preserves previous build behavior) -->
-    <XlfLanguages>en;cs;de;es;fr;it;ja;ko;pl;pt-BR;ru;tr;zh-Hans;zh-Hant</XlfLanguages>
+    <!--<XlfLanguages>en;cs;de;es;fr;it;ja;ko;pl;pt-BR;ru;tr;zh-Hans;zh-Hant</XlfLanguages>-->
+    <XlfLanguages>en</XlfLanguages>
 
     <UpdateXlfOnBuild>true</UpdateXlfOnBuild>
-    <ErrorOnOutOfDateXlf>true</ErrorOnOutOfDateXlf>
+    <ErrorOnOutOfDateXlf>false</ErrorOnOutOfDateXlf>
 
     <!-- Workaround that can be removed when we update machines to 15.6.
          Use Satellite assembly generation task from Microsoft.NET.Sdk even when building with
@@ -50,10 +51,10 @@
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- Disable warnings from XML documentation. https://github.com/Microsoft/msbuild/issues/2927 -->
-    <NoWarn>$(NoWarn);1570;1572;1573;1587</NoWarn>
+    <NoWarn>$(NoWarn);NU1701;NU1604;CS1591;CS1573;1587;1570;NU1701;1701;1570;1572;1573;1587</NoWarn>
 
     <GenAPIAdditionalParameters>$(GenAPIAdditionalParameters) -excludeApiList:&quot;$(RepoRoot)ref\ExcludeAPIList.txt&quot;</GenAPIAdditionalParameters>
-    <GenAPIAdditionalParameters>$(GenAPIAdditionalParameters) -excludeAttributesList:&quot;$(RepoRoot)ref\ExcludeAttributeList.txt&quot;</GenAPIAdditionalParameters>
+    <!--<GenAPIAdditionalParameters>$(GenAPIAdditionalParameters) -excludeAttributesList:&quot;$(RepoRoot)ref\ExcludeAttributeList.txt&quot;</GenAPIAdditionalParameters>-->
     <GenAPIAdditionalParameters>$(GenAPIAdditionalParameters) -headerFile:&quot;$(RepoRoot)ref\LicenseHeader.txt&quot;</GenAPIAdditionalParameters>
 
     <PackageLicenseUrl>http://go.microsoft.com/fwlink/?LinkId=329770</PackageLicenseUrl>

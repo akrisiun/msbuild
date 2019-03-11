@@ -5,26 +5,29 @@
     <CreateTlb Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">true</CreateTlb>
     
     <IsPackable>true</IsPackable>
-    <PackageVersion>16.0.453</PackageVersion>
+    <PackageVersion>16.0.454</PackageVersion>
     <FileVersion>16.0.453.60347</FileVersion>
 
     <Description>This package contains the $(MSBuildProjectName) assembly which is a common assembly used by other MSBuild assemblies.</Description>
     <IncludeSatelliteOutputInPack>false</IncludeSatelliteOutputInPack>
     <ApplyPartialNgenOptimization>true</ApplyPartialNgenOptimization>
 
-    <MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
-    <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>
+    <!--<MSBuildToolsPath2>C:\Program Files\dotnet\sdk\2.2.104</MSBuildToolsPath2>
+    <NuGetRestoreTargets Condition="'$(NuGetRestoreTargets)'==''">$(MSBuildToolsPath2)\NuGet.targets</NuGetRestoreTargets>-->
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="BinaryWriterExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'" />
-    <PackageReference Include="System.Threading.Thread" Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0"
+                      Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'" />
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0"
+                      Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'" />
     <Reference Include="System.Xaml" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-  </ItemGroup>
 
+    <PackageReference Include="Microsoft.DotNet.BuildTools.GenAPI" Version="1.0.0-beta-00081" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Shared\Constants.cs">
       <Link>Shared\Constants.cs</Link>

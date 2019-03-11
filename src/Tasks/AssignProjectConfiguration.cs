@@ -11,6 +11,9 @@ using Microsoft.Build.Shared;
 
 namespace Microsoft.Build.Tasks
 {
+    /// <summary>
+    /// CS1591 happy
+    /// </summary>
     public class AssignProjectConfiguration : ResolveProjectBase
     {
         #region Properties

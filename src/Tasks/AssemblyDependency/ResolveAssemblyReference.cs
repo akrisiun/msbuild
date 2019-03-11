@@ -1418,7 +1418,7 @@ namespace Microsoft.Build.Tasks
         /// Log a specific item metadata.
         /// </summary>
         /// <param name="item"></param>
-        /// <param name="attribute"></param>
+        /// <param name="metadataName"></param>
         private void LogAttribute(ITaskItem item, string metadataName)
         {
             string metadataValue = item.GetMetadata(metadataName);

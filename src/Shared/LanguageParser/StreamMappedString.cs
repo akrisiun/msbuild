@@ -92,7 +92,6 @@ namespace Microsoft.Build.Shared.LanguageParser
         /// <summary>
         /// Restart the stream reader at the beginning.
         /// </summary>
-        /// <param name="binaryStream"></param>
         private void RestartReader()
         {
             _currentPageNumber = -1;

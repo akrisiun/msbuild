@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -121,7 +121,7 @@ namespace Microsoft.Build.Internal
                     string complusInstallRoot = Environment.GetEnvironmentVariable("COMPLUS_INSTALLROOT");
 
 #if THISASSEMBLY
-                    var fileIdentity = ThisAssembly.AssemblyInformationalVersion;
+                    var fileIdentity = "16.0.455"; // or "42.42.42.42" ThisAssembly.AssemblyInformationalVersion;
 #else
                     var fileIdentity = string.Empty;
 
