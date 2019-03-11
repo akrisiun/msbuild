@@ -264,6 +264,9 @@
 	<PackageReference Include="NuGet.Frameworks" Version="5.0.0-rtm.5821" />
     <PackageReference Include="NuGet.Build.Tasks" Version="5.0.0-rtm.5821" />
 	-->
+	<PackageReference Include="NuGet.Frameworks" Version="5.0.0-preview1.5663" />
+    <PackageReference Include="NuGet.Build.Tasks" Version="5.0.0-preview1.5663" />
+	<PackageReference Include="Microsoft.Build.NuGetSdkResolver" Version="5.0.0-preview1.5663" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Build\Microsoft.Build.csproj" />

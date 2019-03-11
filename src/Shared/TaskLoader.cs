@@ -122,6 +122,11 @@ namespace Microsoft.Build.Shared
                 else
 #endif
                 {
+                    // loadedType.Type	{Name = "ResolveFrameworkReferences" FullName = "Microsoft.NET.Build.Tasks.ResolveFrameworkReferences"}	System.Type {System.RuntimeType}
+                    if (loadedType.Type.FullName.Contains("ResolveFrameworkReferences")) {
+                        Console.WriteLine($"Checking {loadedType.Type.FullName} in {loadedType.Type.Assembly.Location}");
+                    }
+
                     // perf improvement for the same appdomain case - we already have the type object
                     // and don't want to go through reflection to recreate it from the name.
                     return (ITask)Activator.CreateInstance(loadedType.Type);
